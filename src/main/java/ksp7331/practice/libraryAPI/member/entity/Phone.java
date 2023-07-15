@@ -1,5 +1,6 @@
 package ksp7331.practice.libraryAPI.member.entity;
 
+import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Phone {
+public class Phone extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,5 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.entity;
 
+import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import lombok.*;
@@ -11,7 +13,10 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Loan {
+public class Loan extends BaseTimeEntity {
+    private static String EXCEEDED_BOOK_MESSAGE = "대출 권수가 초과되었습니다.";
+    private static int MAX_LOANABLE_BOOKS = 5;
+    private static int MAX_LOANABLE_DAYS = 14;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,4 +25,17 @@ public class Loan {
     private LibraryMember libraryMember;
     @OneToMany(mappedBy = "loan")
     private List<LoanBook> loanBooks = new ArrayList<>();
+
+    public void addBook(Book book) {
+        checkBookLoanable();
+        LoanBook loanBook = LoanBook.builder()
+                .book(book)
+                .loan(this)
+                .build();
+        loanBooks.add(loanBook);
+    }
+
+    private void checkBookLoanable() {
+        if (loanBooks.size() >= MAX_LOANABLE_BOOKS) throw new RuntimeException(EXCEEDED_BOOK_MESSAGE);
+    }
 }

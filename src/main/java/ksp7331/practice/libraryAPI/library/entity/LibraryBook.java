@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.library.entity;
 
 import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class LibraryBook {
+public class LibraryBook extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
