@@ -4,16 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-public class LibraryControllerDTO {
-    @Getter
-    public static class Post {
-        private String name;
-    }
-
+public class LibraryServiceDTO {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class Response {
+    public static class Result {
         private Long id;
         private String name;
     }

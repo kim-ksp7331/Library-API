@@ -1,6 +1,8 @@
 package ksp7331.practice.libraryAPI.library.service;
 
+import ksp7331.practice.libraryAPI.library.dto.LibraryServiceDTO;
 import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -17,6 +24,8 @@ class LibraryServiceTest {
 
     @Mock
     private LibraryRepository libraryRepository;
+    @Mock
+    private LibraryMapper libraryMapper;
     @InjectMocks
     private LibraryService libraryService;
     @Test
@@ -30,6 +39,26 @@ class LibraryServiceTest {
         // when
         Long resultId = libraryService.createLibrary(libraryName);
         // then
-        Assertions.assertThat(resultId).isEqualTo(id);
+        assertThat(resultId).isEqualTo(id);
     }
+
+    @Test
+    void findLibraries() {
+        // given
+        int repeat = 3;
+        String libName = "newLib";
+        List<LibraryServiceDTO.Result> libraries = LongStream.rangeClosed(1, repeat).mapToObj(i -> LibraryServiceDTO.Result.builder()
+                .id(i)
+                .name(libName + i)
+                .build()).collect(Collectors.toList());
+        given(libraryMapper.entitiesToServiceDTOs(Mockito.anyList())).willReturn(libraries);
+
+        // when
+        List<LibraryServiceDTO.Result> results = libraryService.findLibraries();
+
+        // then
+        assertThat(results).hasSize(repeat);
+        assertThat(results).allMatch(result -> result.getId() != null);
+    }
+
 }

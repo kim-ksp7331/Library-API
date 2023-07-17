@@ -1,33 +1,27 @@
 package ksp7331.practice.libraryAPI.library.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
+import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
 import ksp7331.practice.libraryAPI.util.UriCreator;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -38,13 +32,15 @@ class LibraryControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private LibraryService libraryService;
+    @MockBean
+    private LibraryMapper libraryMapper;
     @Test
     void postLibrary() throws Exception {
         // given
         Map<String, String> post = Map.of("name", "newLib");
         String content = new ObjectMapper().writeValueAsString(post);
         long id = 1L;
-        given(libraryService.createLibrary(Mockito.anyString())).willReturn(id);
+        BDDMockito.given(libraryService.createLibrary(Mockito.anyString())).willReturn(id);
         String url = "/libraries";
 
         // when
@@ -55,5 +51,28 @@ class LibraryControllerTest {
         actions
                 .andExpect(status().isCreated())
                 .andExpect(header().string("location", UriCreator.createUri(url, id).toString()));
+    }
+    @Test
+    void getLibraries() throws Exception {
+        //given
+        int repeat = 3;
+        String libName = "newLib";
+        List<LibraryControllerDTO.Response> libraries = LongStream.rangeClosed(1, repeat).mapToObj(i -> LibraryControllerDTO.Response.builder()
+                .id(i)
+                .name(libName + i)
+                .build()).collect(Collectors.toList());
+        BDDMockito.given(libraryMapper.ServiceDTOsToControllerDTOs(Mockito.anyList())).willReturn(libraries);
+        String url = "/libraries";
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get(url)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[*].name").value(everyItem(is(startsWith(libName)))));
+
     }
 }
