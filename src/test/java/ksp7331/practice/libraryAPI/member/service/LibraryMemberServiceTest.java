@@ -1,0 +1,90 @@
+package ksp7331.practice.libraryAPI.member.service;
+
+import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
+import ksp7331.practice.libraryAPI.library.service.LibraryService;
+import ksp7331.practice.libraryAPI.member.dto.MemberServiceDTO;
+import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.entity.Member;
+import ksp7331.practice.libraryAPI.member.repository.LibraryMemberRepository;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+
+
+@ExtendWith(MockitoExtension.class)
+class LibraryMemberServiceTest {
+    @Mock
+    private MemberService memberService;
+    @Mock
+    private LibraryService libraryService;
+    @Mock
+    private LibraryMemberRepository libraryMemberRepository;
+    @InjectMocks
+    private LibraryMemberService libraryMemberService;
+
+    @DisplayName("신규 회원 등록 테스트")
+    @Test
+    void createLibraryMemberFirst() {
+        // given
+        MemberServiceDTO.CreateParam createParam = MemberServiceDTO.CreateParam.builder().build();
+        long libraryMemberId = 1L;
+        LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).build();
+        BDDMockito.given(libraryMemberRepository.save(Mockito.any(LibraryMember.class))).willReturn(libraryMember);
+
+        // when
+        Long result = libraryMemberService.createLibraryMember(createParam);
+
+        // then
+        Assertions.assertThat(result).isEqualTo(libraryMemberId);
+    }
+    @DisplayName("기존 회원 신규 도서관 등록 테스트")
+    @Test
+    void createLibraryMember() {
+        // given
+        long memberId = 1L;
+        long libraryMemberId = 1L;
+        MemberServiceDTO.CreateParam createParam = MemberServiceDTO.CreateParam.builder().libraryMemberId(memberId).build();
+        LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).build();
+        BDDMockito.given(libraryMemberRepository.findById(Mockito.anyLong())).willReturn(Optional.ofNullable(LibraryMember.builder().build()));
+        BDDMockito.given(libraryMemberRepository.save(Mockito.any(LibraryMember.class))).willReturn(libraryMember);
+
+        // when
+        Long result = libraryMemberService.createLibraryMember(createParam);
+
+        // then
+        Assertions.assertThat(result).isEqualTo(libraryMemberId);
+    }
+    @Test
+    void findVerifiedMember() {
+        // given
+        long id = 1L;
+        LibraryMember libraryMember = LibraryMember.builder().id(id).build();
+        BDDMockito.given(libraryMemberRepository.findById(Mockito.anyLong())).willReturn(Optional.ofNullable(libraryMember));
+
+        // when
+        LibraryMember result = libraryMemberService.findVerifiedLibraryMember(id);
+
+        // then
+        assertThat(result).isEqualTo(libraryMember);
+    }
+    @Test
+    void findVerifiedMemberWhenNoMember() {
+        // given
+        long id = 1L;
+        given(libraryMemberRepository.findById(Mockito.anyLong())).willReturn(Optional.empty());
+
+        // when // then
+        org.junit.jupiter.api.Assertions.assertThrows(BusinessLogicException.class, () -> libraryMemberService.findVerifiedLibraryMember(id));
+    }
+}

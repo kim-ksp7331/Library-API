@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/libraries")
 @RequiredArgsConstructor
 public class LibraryController {
-    private static String LIBRARY_URL_PREFIX = "/libraries/";
+    private static String LIBRARY_URL_PREFIX = "/libraries";
     private final LibraryService libraryService;
     private final LibraryMapper libraryMapper;
     @PostMapping

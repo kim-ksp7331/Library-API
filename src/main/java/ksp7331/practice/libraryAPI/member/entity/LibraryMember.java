@@ -8,6 +8,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -27,17 +28,25 @@ public class LibraryMember extends BaseTimeEntity {
     @Builder
     public LibraryMember(Long id, Member member, Library library, String phone) {
         this.id = id;
-        this.member = member;
+        setMember(member);
         this.library = library;
         addPhone(phone);
     }
+    private void setMember(Member member) {
+        Optional.ofNullable(member).ifPresent(m -> {
+            this.member = m;
+            m.addLibraryMember(this);
+        });
+    }
 
     public void addPhone(String phoneNumber) {
-        Phone phone = Phone.builder()
-                .number(phoneNumber)
-                .libraryMember(this)
-                .build();
-        phones.add(phone);
+        Optional.ofNullable(phoneNumber).ifPresent(number -> {
+            Phone phone = Phone.builder()
+                    .number(number)
+                    .libraryMember(this)
+                    .build();
+            phones.add(phone);
+        });
     }
     @OneToMany(mappedBy = "libraryMember")
     private List<Loan> loans = new ArrayList<>();

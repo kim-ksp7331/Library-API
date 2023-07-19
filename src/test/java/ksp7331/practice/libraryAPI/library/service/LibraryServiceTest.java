@@ -1,5 +1,6 @@
 package ksp7331.practice.libraryAPI.library.service;
 
+import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.library.dto.LibraryServiceDTO;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
@@ -7,12 +8,14 @@ import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -61,4 +64,27 @@ class LibraryServiceTest {
         assertThat(results).allMatch(result -> result.getId() != null);
     }
 
+    @Test
+    void findVerifiedLibrary() {
+        // given
+        long id = 1L;
+        Library library = Library.builder().id(id).build();
+        given(libraryRepository.findById(Mockito.anyLong())).willReturn(Optional.ofNullable(library));
+
+        // when
+        Library result = libraryService.findVerifiedLibrary(id);
+
+        // then
+        assertThat(result).isEqualTo(library);
+    }
+
+    @Test
+    void findVerifiedLibraryWhenNoLibrary() {
+        // given
+        long id = 1L;
+        given(libraryRepository.findById(Mockito.anyLong())).willReturn(Optional.empty());
+
+        // when // then
+        org.junit.jupiter.api.Assertions.assertThrows(BusinessLogicException.class, () -> libraryService.findVerifiedLibrary(id));
+    }
 }

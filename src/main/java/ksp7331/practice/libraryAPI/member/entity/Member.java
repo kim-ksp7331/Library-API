@@ -26,5 +26,7 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<LibraryMember> libraryMembers = new ArrayList<>();
 
-
+    void addLibraryMember(LibraryMember libraryMember) {
+        libraryMembers.add(libraryMember);
+    }
 }

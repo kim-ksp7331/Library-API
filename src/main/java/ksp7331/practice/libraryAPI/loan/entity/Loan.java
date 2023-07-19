@@ -2,6 +2,7 @@ package ksp7331.practice.libraryAPI.loan.entity;
 
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
+import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import lombok.*;
@@ -36,6 +37,6 @@ public class Loan extends BaseTimeEntity {
     }
 
     private void checkBookLoanable() {
-        if (loanBooks.size() >= MAX_LOANABLE_BOOKS) throw new RuntimeException(EXCEEDED_BOOK_MESSAGE);
+        if (loanBooks.size() >= MAX_LOANABLE_BOOKS) throw new BusinessLogicException(EXCEEDED_BOOK_MESSAGE);
     }
 }
