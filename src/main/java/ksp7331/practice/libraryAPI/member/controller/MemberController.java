@@ -6,10 +6,7 @@ import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
 import ksp7331.practice.libraryAPI.util.UriCreator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -26,5 +23,11 @@ public class MemberController {
         Long id = libraryMemberService.createLibraryMember(memberMapper.postToCreateParam(post));
         URI uri = UriCreator.createUri(MEMBER_URL_PREFIX, id);
         return ResponseEntity.created(uri).build();
+    }
+
+    @DeleteMapping("/{library-member-id}")
+    public ResponseEntity<Void> deleteMember(@PathVariable("library-member-id") Long libraryMemberId) {
+        libraryMemberService.deleteLibraryMembers(libraryMemberId);
+        return ResponseEntity.noContent().build();
     }
 }

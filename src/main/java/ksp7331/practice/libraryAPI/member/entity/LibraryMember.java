@@ -25,7 +25,7 @@ public class LibraryMember extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "LIBRARY_ID")
     private Library library;
-    @OneToMany(mappedBy = "libraryMember")
+    @OneToMany(mappedBy = "libraryMember", cascade = CascadeType.ALL)
     private List<Phone> phones = new ArrayList<>();
     @Builder
     public LibraryMember(Long id, Member member, Library library, String phone) {
@@ -55,6 +55,6 @@ public class LibraryMember extends BaseTimeEntity {
     private void checkDuplicatedPhoneNumber(String phoneNumber) {
         if(phones.contains(phoneNumber)) throw new BusinessLogicException(ExceptionCode.PHONE_DUPLICATED);
     }
-    @OneToMany(mappedBy = "libraryMember")
+    @OneToMany(mappedBy = "libraryMember", cascade = CascadeType.REMOVE)
     private List<Loan> loans = new ArrayList<>();
 }

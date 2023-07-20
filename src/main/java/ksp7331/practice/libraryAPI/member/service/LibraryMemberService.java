@@ -32,6 +32,12 @@ public class LibraryMemberService {
                 .build();
         return libraryMemberRepository.save(libraryMember).getId();
     }
+
+    public void deleteLibraryMembers(Long id) {
+        LibraryMember libraryMember = findVerifiedLibraryMember(id);
+        memberService.deleteMember(libraryMember.getMember());
+    }
+
     public LibraryMember findVerifiedLibraryMember(Long id) {
         Optional<LibraryMember> optionalMember = libraryMemberRepository.findById(id);
         return optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));

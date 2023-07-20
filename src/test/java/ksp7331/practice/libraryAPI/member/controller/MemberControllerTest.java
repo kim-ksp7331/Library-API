@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,5 +61,20 @@ class MemberControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("location", UriCreator.createUri(url, id).toString()));
 
+    }
+
+    @Test
+    void deleteMember() throws Exception {
+        // given
+        Long libraryMemberId = 1L;
+        String url = "/members";
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                delete(url + "/{id}", libraryMemberId)
+        );
+        // then
+        actions
+                .andExpect(status().isNoContent());
     }
 }

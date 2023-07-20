@@ -23,7 +23,7 @@ public class Member extends BaseTimeEntity {
         this.id = id;
         this.name = name;
     }
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<LibraryMember> libraryMembers = new ArrayList<>();
 
     void addLibraryMember(LibraryMember libraryMember) {
