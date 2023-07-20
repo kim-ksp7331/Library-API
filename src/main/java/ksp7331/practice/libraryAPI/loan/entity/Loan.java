@@ -3,6 +3,7 @@ package ksp7331.practice.libraryAPI.loan.entity;
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
+import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import lombok.*;
@@ -15,7 +16,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Loan extends BaseTimeEntity {
-    private static String EXCEEDED_BOOK_MESSAGE = "대출 권수가 초과되었습니다.";
     private static int MAX_LOANABLE_BOOKS = 5;
     private static int MAX_LOANABLE_DAYS = 14;
     @Id
@@ -37,6 +37,6 @@ public class Loan extends BaseTimeEntity {
     }
 
     private void checkBookLoanable() {
-        if (loanBooks.size() >= MAX_LOANABLE_BOOKS) throw new BusinessLogicException(EXCEEDED_BOOK_MESSAGE);
+        if (loanBooks.size() >= MAX_LOANABLE_BOOKS) throw new BusinessLogicException(ExceptionCode.LOAN_EXCEEDED);
     }
 }

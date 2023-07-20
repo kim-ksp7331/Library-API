@@ -1,6 +1,8 @@
 package ksp7331.practice.libraryAPI.member.entity;
 
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
+import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
+import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.loan.entity.Loan;
 import lombok.*;
@@ -41,12 +43,17 @@ public class LibraryMember extends BaseTimeEntity {
 
     public void addPhone(String phoneNumber) {
         Optional.ofNullable(phoneNumber).ifPresent(number -> {
+            checkDuplicatedPhoneNumber(number);
             Phone phone = Phone.builder()
                     .number(number)
                     .libraryMember(this)
                     .build();
             phones.add(phone);
         });
+    }
+
+    private void checkDuplicatedPhoneNumber(String phoneNumber) {
+        if(phones.contains(phoneNumber)) throw new BusinessLogicException(ExceptionCode.PHONE_DUPLICATED);
     }
     @OneToMany(mappedBy = "libraryMember")
     private List<Loan> loans = new ArrayList<>();

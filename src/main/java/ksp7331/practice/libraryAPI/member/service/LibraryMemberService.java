@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.member.service;
 
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
+import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
 import ksp7331.practice.libraryAPI.member.dto.MemberServiceDTO;
@@ -17,7 +18,6 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class LibraryMemberService {
-    private static String No_MEMBER_MESSAGE = "Member Not Found";
     private final MemberService memberService;
     private final LibraryService libraryService;
     private final LibraryMemberRepository libraryMemberRepository;
@@ -34,7 +34,7 @@ public class LibraryMemberService {
     }
     public LibraryMember findVerifiedLibraryMember(Long id) {
         Optional<LibraryMember> optionalMember = libraryMemberRepository.findById(id);
-        return optionalMember.orElseThrow(() -> new BusinessLogicException(No_MEMBER_MESSAGE));
+        return optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
     private Member getMember(Long id, String name) {

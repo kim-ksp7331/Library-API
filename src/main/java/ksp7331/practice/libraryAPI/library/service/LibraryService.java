@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.library.service;
 
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
+import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.library.dto.LibraryServiceDTO;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
@@ -16,7 +17,6 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class LibraryService {
-    private static String No_LIBRARY_MESSAGE = "LIBRARY Not Found";
     private final LibraryRepository libraryRepository;
     private final LibraryMapper libraryMapper;
 
@@ -36,6 +36,6 @@ public class LibraryService {
     @Transactional(readOnly = true)
     public Library findVerifiedLibrary(Long id) {
         Optional<Library> optionalLibrary = libraryRepository.findById(id);
-        return optionalLibrary.orElseThrow(() -> new BusinessLogicException(No_LIBRARY_MESSAGE));
+        return optionalLibrary.orElseThrow(() -> new BusinessLogicException(ExceptionCode.LIBRARY_NOT_FOUND));
     }
 }
