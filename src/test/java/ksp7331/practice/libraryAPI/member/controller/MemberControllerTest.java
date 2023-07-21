@@ -39,11 +39,16 @@ class MemberControllerTest {
     @Test
     void postMember() throws Exception {
         // given
+        long libraryMemberId = 1L;
+        String name = "kim";
+        long libraryId = 1L;
+        String phoneNumber = "010-0000-0000";
+
         Map<String, Object> post = new HashMap<>();
-        post.put("memberId", 1L);
-        post.put("name", "kim");
-        post.put("libraryId", 1L);
-        post.put("phoneNumber", "010-0000-0000");
+        post.put("libraryMemberId", libraryMemberId);
+        post.put("name", name);
+        post.put("libraryId", libraryId);
+        post.put("phoneNumber", phoneNumber);
 
         String content = new ObjectMapper().writeValueAsString(post);
         Long id = 1L;
