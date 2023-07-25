@@ -18,7 +18,9 @@ public class BookCustomRepositoryImpl implements BookCustomRepository {
     @Override
     public Optional<Book> findByIdFetchJoin(Long id) {
         return jpaQueryFactory.selectFrom(book)
+                .where(book.id.eq(id))
                 .innerJoin(book.libraryBooks)
+                .innerJoin(book.libraryBooks.any().library)
                 .fetchJoin()
                 .stream().findAny();
     }
