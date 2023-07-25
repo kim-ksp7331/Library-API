@@ -24,5 +24,7 @@ public class Book {
         this.name = name;
         this.author = author;
     }
+    @OneToMany(mappedBy = "book")
+    public List<LibraryBook> libraryBooks = new ArrayList<>();
 
 }

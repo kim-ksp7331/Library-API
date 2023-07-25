@@ -1,15 +1,18 @@
 package ksp7331.practice.libraryAPI.library.repository;
 
+import ksp7331.practice.libraryAPI.QueryDslConfig;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@Import(QueryDslConfig.class)
 @Transactional
 class LibraryRepositoryTest {
     @Autowired

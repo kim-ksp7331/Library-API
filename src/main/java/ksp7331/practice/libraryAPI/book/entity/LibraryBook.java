@@ -1,4 +1,4 @@
-package ksp7331.practice.libraryAPI.library.entity;
+package ksp7331.practice.libraryAPI.book.entity;
 
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;

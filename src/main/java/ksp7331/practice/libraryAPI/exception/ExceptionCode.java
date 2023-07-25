@@ -6,7 +6,8 @@ public enum ExceptionCode {
     LOAN_EXCEEDED(403, "Loan Exceeded"),
     PHONE_DUPLICATED(403, "Phone Duplicated"),
     MEMBER_NOT_FOUND(404, "Member Not Found"),
-    LIBRARY_NOT_FOUND(404, "library Not Found");
+    LIBRARY_NOT_FOUND(404, "Library Not Found"),
+    BOOK_NOT_FOUND(404, "Book Not Found"),;
     @Getter
     private int status;
     @Getter
