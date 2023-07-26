@@ -25,6 +25,6 @@ public class Book {
         this.author = author;
     }
     @OneToMany(mappedBy = "book")
-    public List<LibraryBook> libraryBooks = new ArrayList<>();
+    private List<LibraryBook> libraryBooks = new ArrayList<>();
 
 }

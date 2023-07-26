@@ -29,7 +29,7 @@ public class LibraryBookService {
 
     public void verifyExistBook(Library library, Book book) {
         Long libraryId = library.getId();
-        if (book.libraryBooks.stream().anyMatch(libraryBook -> libraryBook.getLibrary().getId() == libraryId)) {
+        if (book.getLibraryBooks().stream().anyMatch(libraryBook -> libraryBook.getLibrary().getId() == libraryId)) {
             throw new BusinessLogicException(ExceptionCode.BOOK_EXISTS);
         }
     }

@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(QueryDslConfig.class)
-@Transactional
 class LibraryRepositoryTest {
     @Autowired
     private LibraryRepository libraryRepository;
