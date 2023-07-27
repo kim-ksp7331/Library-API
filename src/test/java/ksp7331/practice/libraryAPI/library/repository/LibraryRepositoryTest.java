@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -27,7 +28,7 @@ class LibraryRepositoryTest {
         Library savedLibrary = libraryRepository.save(library);
 
         // then
-        Assertions.assertThat(savedLibrary.getId()).isEqualTo(1L);
+        assertThat(savedLibrary.getId()).isPositive();
     }
 
 }

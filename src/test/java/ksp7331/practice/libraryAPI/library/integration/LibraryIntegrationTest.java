@@ -56,11 +56,6 @@ public class LibraryIntegrationTest extends IntegrationTest {
     @Test
     void getLibraries() throws Exception {
         //given
-        int repeat = 3;
-        String libName = "newLib";
-        LongStream.rangeClosed(1, repeat).mapToObj(i -> Library.builder()
-                .name(libName + i)
-                .build()).forEach(library -> libraryRepository.save(library));
         String url = "/libraries";
 
         // when
@@ -71,7 +66,8 @@ public class LibraryIntegrationTest extends IntegrationTest {
         // then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].name").value(everyItem(is(startsWith(libName)))));
+                .andExpect(jsonPath("$[0].name").value("서울"))
+                .andExpect(jsonPath("$[1].name").value("부산"));
 
     }
 }

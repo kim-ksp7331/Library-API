@@ -5,6 +5,7 @@ import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
+import org.assertj.core.api.ObjectAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,27 +21,9 @@ import static org.assertj.core.api.Assertions.*;
 @Import(QueryDslConfig.class)
 class BookRepositoryTest {
 
-    private BookRepository bookRepository;
-    private LibraryRepository libraryRepository;
-    private LibraryBookRepository libraryBookRepository;
-
-    private String bookName = "Effective Java";
-    private String author = "Joshua Bloch";
-    private String libraryName = "new Lib";
     @Autowired
-    public BookRepositoryTest(BookRepository bookRepository, LibraryRepository libraryRepository, LibraryBookRepository libraryBookRepository) {
+    private BookRepository bookRepository;
 
-        this.bookRepository = bookRepository;
-        this.libraryRepository = libraryRepository;
-        this.libraryBookRepository = libraryBookRepository;
-
-        Book book = Book.builder().name(bookName).author(author).build();
-        Book savedBook = bookRepository.save(book);
-        Library library = Library.builder().name(libraryName).build();
-        Library savedLibrary = libraryRepository.save(library);
-        LibraryBook libraryBook = LibraryBook.builder().book(savedBook).library(savedLibrary).build();
-        libraryBookRepository.save(libraryBook);
-    }
 
     @Test
     void findByIdFetchJoin() {
@@ -52,9 +35,14 @@ class BookRepositoryTest {
         // then
         assertThat(optionalBook.isPresent()).isTrue();
         Book result = optionalBook.get();
-        assertThat(result.getName()).isEqualTo(bookName);
-        assertThat(result.getAuthor()).isEqualTo(author);
-        assertThat(result.getLibraryBooks()).anyMatch(lb -> lb.getLibrary().getName().equals(libraryName));
+        assertThat(result.getName()).isEqualTo("Effective Java");
+        assertThat(result.getAuthor()).isEqualTo("Joshua Bloch");
+        assertLibrary(result, 0, "서울");
+        assertLibrary(result, 1, "부산");
+    }
+
+    private void assertLibrary(Book result, int index, String libraryName) {
+        assertThat(result.getLibraryBooks().get(index).getLibrary().getName()).isEqualTo(libraryName);
     }
 
 }

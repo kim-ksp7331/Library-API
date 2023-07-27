@@ -1,4 +1,7 @@
 spring:
+  output:
+    ansi:
+      enabled: always
   h2:
     console:
       enabled: true
@@ -9,3 +12,10 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      dataLocations: classpath:db/h2/data.sql
