@@ -35,6 +35,8 @@ class MemberControllerTest {
     private LibraryMemberService libraryMemberService;
     @MockBean
     private MemberMapper memberMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void postMember() throws Exception {
@@ -50,7 +52,7 @@ class MemberControllerTest {
         post.put("libraryId", libraryId);
         post.put("phoneNumber", phoneNumber);
 
-        String content = new ObjectMapper().writeValueAsString(post);
+        String content = objectMapper.writeValueAsString(post);
         Long id = 1L;
         BDDMockito.given(memberMapper.postToCreateParam(Mockito.any(MemberControllerDTO.Post.class)))
                 .willReturn(MemberServiceDTO.CreateParam.builder().build());

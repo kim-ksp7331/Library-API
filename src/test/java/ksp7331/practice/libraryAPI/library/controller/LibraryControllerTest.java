@@ -34,12 +34,14 @@ class LibraryControllerTest {
     private LibraryService libraryService;
     @MockBean
     private LibraryMapper libraryMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
     @Test
     void postLibrary() throws Exception {
         // given
         String name = "newLib";
         Map<String, String> post = Map.of("name", name);
-        String content = new ObjectMapper().writeValueAsString(post);
+        String content = objectMapper.writeValueAsString(post);
         long id = 1L;
         BDDMockito.given(libraryService.createLibrary(Mockito.anyString())).willReturn(id);
         String url = "/libraries";

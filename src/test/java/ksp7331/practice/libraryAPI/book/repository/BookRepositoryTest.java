@@ -24,7 +24,6 @@ class BookRepositoryTest {
     @Autowired
     private BookRepository bookRepository;
 
-
     @Test
     void findByIdFetchJoin() {
         // given
@@ -37,8 +36,8 @@ class BookRepositoryTest {
         Book result = optionalBook.get();
         assertThat(result.getName()).isEqualTo("Effective Java");
         assertThat(result.getAuthor()).isEqualTo("Joshua Bloch");
-        assertLibrary(result, 0, "서울");
-        assertLibrary(result, 1, "부산");
+        assertLibrary(result, 0, "서울 도서관");
+        assertLibrary(result, 1, "부산 도서관");
     }
 
     private void assertLibrary(Book result, int index, String libraryName) {

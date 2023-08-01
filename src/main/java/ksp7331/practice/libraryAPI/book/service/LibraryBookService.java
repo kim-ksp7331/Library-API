@@ -27,7 +27,7 @@ public class LibraryBookService {
         libraryBookRepository.save(libraryBook);
     }
 
-    public void verifyExistBook(Library library, Book book) {
+    private void verifyExistBook(Library library, Book book) {
         Long libraryId = library.getId();
         if (book.getLibraryBooks().stream().anyMatch(libraryBook -> libraryBook.getLibrary().getId() == libraryId)) {
             throw new BusinessLogicException(ExceptionCode.BOOK_EXISTS);

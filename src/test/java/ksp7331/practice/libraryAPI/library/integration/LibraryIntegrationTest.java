@@ -3,7 +3,7 @@ package ksp7331.practice.libraryAPI.library.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
-import ksp7331.practice.libraryAPI.member.IntegrationTest;
+import ksp7331.practice.libraryAPI.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
-import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
@@ -30,13 +29,15 @@ public class LibraryIntegrationTest extends IntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private LibraryRepository libraryRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void postLibrary() throws Exception {
         // given
         String name = "newLib";
         Map<String, String> post = Map.of("name", name);
-        String content = new ObjectMapper().writeValueAsString(post);
+        String content = objectMapper.writeValueAsString(post);
         String url = "/libraries";
 
         // when
@@ -66,8 +67,8 @@ public class LibraryIntegrationTest extends IntegrationTest {
         // then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("서울"))
-                .andExpect(jsonPath("$[1].name").value("부산"));
+                .andExpect(jsonPath("$[0].name").value("서울 도서관"))
+                .andExpect(jsonPath("$[1].name").value("부산 도서관"));
 
     }
 }

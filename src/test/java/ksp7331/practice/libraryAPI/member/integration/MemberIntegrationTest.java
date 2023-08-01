@@ -3,12 +3,11 @@ package ksp7331.practice.libraryAPI.member.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
-import ksp7331.practice.libraryAPI.member.IntegrationTest;
+import ksp7331.practice.libraryAPI.IntegrationTest;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import ksp7331.practice.libraryAPI.member.repository.LibraryMemberRepository;
 import ksp7331.practice.libraryAPI.member.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +40,8 @@ public class MemberIntegrationTest extends IntegrationTest {
     private MemberRepository memberRepository;
     @Autowired
     private LibraryMemberRepository libraryMemberRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @DisplayName("신규 회원 등록")
     @Test
@@ -55,7 +56,7 @@ public class MemberIntegrationTest extends IntegrationTest {
         post.put("libraryId", libraryId);
         post.put("phoneNumber", phoneNumber);
 
-        String content = new ObjectMapper().writeValueAsString(post);
+        String content = objectMapper.writeValueAsString(post);
         String url = "/members";
 
         // when
@@ -88,7 +89,7 @@ public class MemberIntegrationTest extends IntegrationTest {
         post.put("libraryId", libraryId);
         post.put("phoneNumber", phoneNumber);
 
-        String content = new ObjectMapper().writeValueAsString(post);
+        String content = objectMapper.writeValueAsString(post);
         String url = "/members";
 
         // when

@@ -1,4 +1,4 @@
-package ksp7331.practice.libraryAPI.member;
+package ksp7331.practice.libraryAPI;
 
 import org.springframework.test.web.servlet.ResultActions;
 
