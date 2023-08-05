@@ -1,6 +1,8 @@
 package ksp7331.practice.libraryAPI.library.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ksp7331.practice.libraryAPI.config.DbTestConfig;
+import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
 import ksp7331.practice.libraryAPI.IntegrationTest;
@@ -8,11 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
@@ -29,6 +33,8 @@ public class LibraryIntegrationTest extends IntegrationTest {
     private MockMvc mockMvc;
     @Autowired
     private LibraryRepository libraryRepository;
+    @Autowired
+    private DbTestInitializer dbTestInitializer;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -58,6 +64,7 @@ public class LibraryIntegrationTest extends IntegrationTest {
     void getLibraries() throws Exception {
         //given
         String url = "/libraries";
+        List<Library> libraries = dbTestInitializer.getLibraries();
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -65,10 +72,10 @@ public class LibraryIntegrationTest extends IntegrationTest {
                         .accept(MediaType.APPLICATION_JSON)
         );
         // then
-        actions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("서울 도서관"))
-                .andExpect(jsonPath("$[1].name").value("부산 도서관"));
+        actions.andExpect(status().isOk());
+        for (int i = 0; i < libraries.size(); i++) {
+            actions.andExpect(jsonPath("$[%d].name", i).value(libraries.get(i).getName()));
+        }
 
     }
 }

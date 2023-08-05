@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.member.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
 import ksp7331.practice.libraryAPI.IntegrationTest;
@@ -35,11 +36,9 @@ public class MemberIntegrationTest extends IntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private LibraryRepository libraryRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
     private LibraryMemberRepository libraryMemberRepository;
+    @Autowired
+    private DbTestInitializer dbTestInitializer;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -48,7 +47,7 @@ public class MemberIntegrationTest extends IntegrationTest {
     void postMemberFirstTime() throws Exception {
         // given
         String name = "kim";
-        long libraryId = saveLibrary().getId();
+        long libraryId = 1L;
         String phoneNumber = "010-0000-0000";
 
         Map<String, Object> post = new HashMap<>();
@@ -79,9 +78,8 @@ public class MemberIntegrationTest extends IntegrationTest {
     @Test
     void postLibraryMember() throws Exception {
         // given
-        LibraryMember libraryMember = saveMember();
-        long libraryMemberId = libraryMember.getId();
-        long libraryId = libraryMember.getLibrary().getId();
+        long libraryMemberId = 1L;
+        long libraryId = 1L;
         String phoneNumber = "010-1111-1111";
 
         Map<String, Object> post = new HashMap<>();
@@ -104,7 +102,7 @@ public class MemberIntegrationTest extends IntegrationTest {
         long id = getId(url, actions);
         LibraryMember findLibraryMember = libraryMemberRepository.findById(id).get();
         assertThat(findLibraryMember).isNotNull();
-        assertThat(findLibraryMember.getMember().getName()).isEqualTo(libraryMember.getMember().getName());
+        assertThat(findLibraryMember.getMember().getName()).isEqualTo(dbTestInitializer.getMembers().get(0).getName());
         assertThat(findLibraryMember.getPhones()).anyMatch(phone -> phone.getNumber().equals(phoneNumber));
 
     }
@@ -113,7 +111,7 @@ public class MemberIntegrationTest extends IntegrationTest {
     @Test
     void deleteMember() throws Exception {
         // given
-        Long libraryMemberId = saveMember().getId();
+        Long libraryMemberId = 1L;
         String url = "/members";
 
         // when
@@ -124,23 +122,5 @@ public class MemberIntegrationTest extends IntegrationTest {
         actions
                 .andExpect(status().isNoContent());
         assertThat(libraryMemberRepository.findById(libraryMemberId).isEmpty()).isTrue();
-    }
-
-    private LibraryMember saveMember() {
-        String name = "kim";
-        Member member = Member.builder().name(name).build();
-        Member savedMember = memberRepository.save(member);
-        String phone = "010-0000-0000";
-        LibraryMember libraryMember = LibraryMember.builder()
-                .member(savedMember)
-                .library(saveLibrary())
-                .phone(phone)
-                .build();
-        return libraryMemberRepository.save(libraryMember);
-    }
-    private Library saveLibrary() {
-        String name = "newLib";
-        Library library = Library.builder().name(name).build();
-        return libraryRepository.save(library);
     }
 }

@@ -1,5 +1,7 @@
 package ksp7331.practice.libraryAPI;
 
+import ksp7331.practice.libraryAPI.config.DbTestConfig;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.ResultActions;
 
 public class IntegrationTest {

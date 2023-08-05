@@ -3,6 +3,8 @@ package ksp7331.practice.libraryAPI.book.repository;
 import ksp7331.practice.libraryAPI.QueryDslConfig;
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.config.DbTestConfig;
+import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
 import org.assertj.core.api.ObjectAssert;
@@ -13,31 +15,38 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-@Import(QueryDslConfig.class)
+@Import(DbTestConfig.class)
 class BookRepositoryTest {
 
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private DbTestInitializer dbTestInitializer;
 
     @Test
     void findByIdFetchJoin() {
         // given
+        long bookId = 1L;
+        Book expected = dbTestInitializer.getBooks().get(0);
+        List<Library> libraries = dbTestInitializer.getLibraries();
 
         // when
-        Optional<Book> optionalBook = bookRepository.findByIdFetchJoin(1L);
+        Optional<Book> optionalBook = bookRepository.findByIdFetchJoin(bookId);
 
         // then
         assertThat(optionalBook.isPresent()).isTrue();
         Book result = optionalBook.get();
-        assertThat(result.getName()).isEqualTo("Effective Java");
-        assertThat(result.getAuthor()).isEqualTo("Joshua Bloch");
-        assertLibrary(result, 0, "서울 도서관");
-        assertLibrary(result, 1, "부산 도서관");
+        assertThat(result.getName()).isEqualTo(expected.getName());
+        assertThat(result.getAuthor()).isEqualTo(expected.getAuthor());
+        for (int i = 0; i < 2; i++) {
+            assertLibrary(result, i, libraries.get(i).getName());
+        }
     }
 
     private void assertLibrary(Book result, int index, String libraryName) {
