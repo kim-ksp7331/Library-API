@@ -6,6 +6,7 @@ import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
 import ksp7331.practice.libraryAPI.IntegrationTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,6 +39,7 @@ public class LibraryIntegrationTest extends IntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @DisplayName("도서관 등록")
     @Test
     void postLibrary() throws Exception {
         // given
@@ -60,6 +62,7 @@ public class LibraryIntegrationTest extends IntegrationTest {
         assertThat(library).isNotNull();
         assertThat(library.getName()).isEqualTo(name);
     }
+    @DisplayName("도서관 조회")
     @Test
     void getLibraries() throws Exception {
         //given

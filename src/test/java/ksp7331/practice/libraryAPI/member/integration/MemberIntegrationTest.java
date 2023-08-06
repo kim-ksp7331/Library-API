@@ -108,6 +108,7 @@ public class MemberIntegrationTest extends IntegrationTest {
     }
 
 
+    @DisplayName("회원 탈퇴")
     @Test
     void deleteMember() throws Exception {
         // given

@@ -4,6 +4,7 @@ import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import ksp7331.practice.libraryAPI.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -26,6 +27,7 @@ class MemberServiceTest {
     @InjectMocks
     private MemberService memberService;
 
+    @DisplayName("member 엔티티 생성")
     @Test
     void createMember() {
         // given

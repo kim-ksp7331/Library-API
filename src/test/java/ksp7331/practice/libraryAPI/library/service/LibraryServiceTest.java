@@ -6,6 +6,7 @@ import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
 import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -31,6 +32,8 @@ class LibraryServiceTest {
     private LibraryMapper libraryMapper;
     @InjectMocks
     private LibraryService libraryService;
+
+    @DisplayName("library 엔티티 생성")
     @Test
     void createLibrary() {
         // given
@@ -45,6 +48,7 @@ class LibraryServiceTest {
         assertThat(resultId).isEqualTo(id);
     }
 
+    @DisplayName("library 엔티티 전체 조회")
     @Test
     void findLibraries() {
         // given
@@ -64,6 +68,7 @@ class LibraryServiceTest {
         assertThat(results).allMatch(result -> result.getId() != null);
     }
 
+    @DisplayName("library 엔티티가 존재할 때 조회")
     @Test
     void findVerifiedLibrary() {
         // given
@@ -78,6 +83,7 @@ class LibraryServiceTest {
         assertThat(result).isEqualTo(library);
     }
 
+    @DisplayName("library 엔티티가 존재하지 않을 때 조회")
     @Test
     void findVerifiedLibraryWhenNoLibrary() {
         // given

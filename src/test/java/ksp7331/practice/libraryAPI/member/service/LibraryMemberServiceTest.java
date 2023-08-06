@@ -33,7 +33,7 @@ class LibraryMemberServiceTest {
     @InjectMocks
     private LibraryMemberService libraryMemberService;
 
-    @DisplayName("신규 회원 등록 테스트")
+    @DisplayName("신규 libraryMember 엔티티 생성 테스트")
     @Test
     void createLibraryMemberFirst() {
         // given
@@ -48,7 +48,7 @@ class LibraryMemberServiceTest {
         // then
         Assertions.assertThat(result).isEqualTo(libraryMemberId);
     }
-    @DisplayName("기존 회원 신규 도서관 등록 테스트")
+    @DisplayName("기존 libraryMember에 대해 신규 도서관 등록 테스트")
     @Test
     void createLibraryMember() {
         // given
@@ -65,6 +65,7 @@ class LibraryMemberServiceTest {
         // then
         Assertions.assertThat(result).isEqualTo(libraryMemberId);
     }
+    @DisplayName("libraryMember 엔티티가 존재할 때 회원 조회")
     @Test
     void findVerifiedMember() {
         // given
@@ -78,6 +79,7 @@ class LibraryMemberServiceTest {
         // then
         assertThat(result).isEqualTo(libraryMember);
     }
+    @DisplayName("libraryMember 엔티티가 존재하지 않을 때 회원 조회")
     @Test
     void findVerifiedMemberWhenNoMember() {
         // given

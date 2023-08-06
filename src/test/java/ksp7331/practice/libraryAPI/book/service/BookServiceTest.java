@@ -5,6 +5,7 @@ import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
 import ksp7331.practice.libraryAPI.book.repository.BookRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -29,6 +30,7 @@ class BookServiceTest {
     @Mock
     private BookMapper bookMapper;
 
+    @DisplayName("신규 book 엔티티 생성")
     @Test
     void createNewBook() {
         // given
@@ -47,6 +49,7 @@ class BookServiceTest {
         assertThat(result).isEqualTo(bookId);
     }
 
+    @DisplayName("기존에 생성된 book 다른 library에 등록")
     @Test
     void addBookToLibrary() {
         // given

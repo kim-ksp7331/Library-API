@@ -6,6 +6,7 @@ import ksp7331.practice.libraryAPI.book.repository.LibraryBookRepository;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -26,6 +27,7 @@ class LibraryBookServiceTest {
     @Mock
     private LibraryService libraryService;
 
+    @DisplayName("library에 book 등록")
     @Test
     void createLibraryBook() {
         // given
