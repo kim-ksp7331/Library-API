@@ -16,7 +16,8 @@ public class DbTestInitializer {
     private final TestRepository testRepository;
     private List<Book> books = List.of(
             Book.builder().name("Effective Java").author("Joshua Bloch").build(),
-            Book.builder().name("자바 ORM 표준 JPA 프로그래밍").author("김영한").build()
+            Book.builder().name("자바 ORM 표준 JPA 프로그래밍").author("김영한").build(),
+            Book.builder().name("Clean Code").author("Robert C. Martin").build()
     );
     private List<Library> libraries = List.of(
             Library.builder().name("서울 도서관").build(),
@@ -26,7 +27,8 @@ public class DbTestInitializer {
             TestEntity.newLibraryBook(1L, 1L),
             TestEntity.newLibraryBook(1L, 2L),
             TestEntity.newLibraryBook(2L, 1L),
-            TestEntity.newLibraryBook(2L, 2L)
+            TestEntity.newLibraryBook(2L, 2L),
+            TestEntity.newLibraryBook(3L, 1L)
     );
     private List<Member> members = List.of(
         Member.builder().name("kim").build()
