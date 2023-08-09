@@ -6,6 +6,7 @@ import ksp7331.practice.libraryAPI.book.dto.BookControllerDTO;
 import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
 import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
 import ksp7331.practice.libraryAPI.book.service.BookService;
+import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
@@ -87,5 +89,41 @@ class BookControllerTest {
         // then
         actions
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBook() throws Exception {
+        // given
+        Long bookId = 1L;
+        String name = "book1";
+        String author = "author1";
+        long libraryId = 1L;
+        String libraryName = "lib1";
+
+        LibraryControllerDTO.Response libraryResponse = LibraryControllerDTO.Response.builder()
+                .id(libraryId).name(libraryName).build();
+        BookControllerDTO.Response response = BookControllerDTO.Response.builder()
+                .bookId(bookId).name(name).author(author).libraries(List.of(libraryResponse)).build();
+
+        BDDMockito.given(bookService.findBook(Mockito.anyLong())).willReturn(BookServiceDTO.Result.builder().build());
+        BDDMockito.given(bookMapper.ServiceDTOToControllerDTO(Mockito.any(BookServiceDTO.Result.class)))
+                .willReturn(response);
+
+        String urlTemplate = "/books/{book-id}";
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get(urlTemplate, bookId)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bookId").value(bookId))
+                .andExpect(jsonPath("$.name").value(name))
+                .andExpect(jsonPath("$.author").value(author))
+                .andExpect(jsonPath("$.libraries[0].id").value(libraryId))
+                .andExpect(jsonPath("$.libraries[0].name").value(libraryName));
     }
 }

@@ -62,4 +62,25 @@ class BookServiceTest {
         // when //then
         assertThatCode(() -> bookService.addBookToLibrary(addParam)).doesNotThrowAnyException();
     }
+
+    @DisplayName("id를 통해 book 엔티티 조회")
+    @Test
+    void findBook() {
+        // given
+        long bookId = 1L;
+        BookServiceDTO.Result book = BookServiceDTO.Result.builder()
+                .name("book1")
+                .author("author1")
+                .build();
+
+        BDDMockito.given(bookRepository.findByIdFetchJoin(Mockito.anyLong()))
+                .willReturn(Optional.ofNullable(Book.builder().build()));
+        BDDMockito.given(bookMapper.EntityToServiceDTO(Mockito.any(Book.class))).willReturn(book);
+
+        // when
+        BookServiceDTO.Result result = bookService.findBook(bookId);
+
+        // then
+        assertThat(result).isEqualTo(book);
+    }
 }

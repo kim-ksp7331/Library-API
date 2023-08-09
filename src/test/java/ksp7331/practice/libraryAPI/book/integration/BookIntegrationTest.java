@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.IntegrationTest;
 import ksp7331.practice.libraryAPI.book.dto.BookControllerDTO;
 import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
+import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
 import ksp7331.practice.libraryAPI.book.service.BookService;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
+import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
+import ksp7331.practice.libraryAPI.library.entity.Library;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -21,13 +24,15 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -87,5 +92,34 @@ public class BookIntegrationTest extends IntegrationTest {
         // then
         actions
                 .andExpect(status().isOk());
+    }
+    @DisplayName("id를 통해 도서 조회")
+    @Test
+    void getBook() throws Exception {
+        // given
+        Long bookId = 1L;
+        Book book = dbTestInitializer.getBooks().get(0);
+        List<Library> libraries = dbTestInitializer.getLibraries();
+
+
+        String urlTemplate = "/books/{book-id}";
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get(urlTemplate, bookId)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bookId").value(bookId))
+                .andExpect(jsonPath("$.name").value(book.getName()))
+                .andExpect(jsonPath("$.author").value(book.getAuthor()));
+        for (int i = 0; i < 2; i++) {
+            actions
+                    .andExpect(jsonPath("$.libraries[%d].id", i).value(libraries.get(i).getId()))
+                    .andExpect(jsonPath("$.libraries[%d].name", i).value(libraries.get(i).getName()));
+        }
     }
 }

@@ -32,6 +32,11 @@ public class BookService {
         libraryBookService.createLibraryBook(book, addParam.getLibraryId());
     }
 
+    public BookServiceDTO.Result findBook(Long bookId) {
+        Book book = findVerifiedBook(bookId);
+        return bookMapper.EntityToServiceDTO(book);
+    }
+
     private Book findVerifiedBook(Long bookId) {
         Optional<Book> optionalBook = bookRepository.findByIdFetchJoin(bookId);
         return optionalBook.orElseThrow(() -> new BusinessLogicException(ExceptionCode.BOOK_NOT_FOUND));

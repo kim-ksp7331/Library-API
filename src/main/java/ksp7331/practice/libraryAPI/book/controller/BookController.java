@@ -34,4 +34,9 @@ public class BookController {
                         .build());
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/books/{book-id}")
+    public ResponseEntity<BookControllerDTO.Response> getBook(@PathVariable("book-id")Long bookId) {
+        BookControllerDTO.Response response = bookMapper.ServiceDTOToControllerDTO(bookService.findBook(bookId));
+        return ResponseEntity.ok(response);
+    }
 }
