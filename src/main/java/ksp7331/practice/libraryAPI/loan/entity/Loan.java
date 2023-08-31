@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.entity;
 
 import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
@@ -24,10 +25,17 @@ public class Loan extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "LIBRARY_MEMBER_ID")
     private LibraryMember libraryMember;
-    @OneToMany(mappedBy = "loan")
+    @OneToMany(mappedBy = "loan", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<LoanBook> loanBooks = new ArrayList<>();
 
-    public void addBook(Book book) {
+    @Builder
+    public Loan(Long id, LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
+        this.id = id;
+        this.libraryMember = libraryMember;
+        libraryBooks.forEach(this::addBook);
+    }
+
+    public void addBook(LibraryBook book) {
         checkBookLoanable();
         LoanBook loanBook = LoanBook.builder()
                 .book(book)

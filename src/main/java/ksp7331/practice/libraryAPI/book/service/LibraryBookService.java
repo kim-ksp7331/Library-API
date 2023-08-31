@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,5 +34,10 @@ public class LibraryBookService {
         if (book.getLibraryBooks().stream().anyMatch(libraryBook -> libraryBook.getLibrary().getId() == libraryId)) {
             throw new BusinessLogicException(ExceptionCode.BOOK_EXISTS);
         }
+    }
+
+    public List<LibraryBook> findExistBookInLibrary(Long libraryId, List<Long> bookIds) {
+        List<LibraryBook> libraryBooks = libraryBookRepository.findByLibraryIdAndBookIds(libraryId, bookIds);
+        return libraryBooks;
     }
 }

@@ -20,8 +20,8 @@ public class MemberController {
 
     @PostMapping
     public ResponseEntity<Void> postMember(@RequestBody MemberControllerDTO.Post post) {
-        Long id = libraryMemberService.createLibraryMember(memberMapper.postToCreateParam(post));
-        URI uri = UriCreator.createUri(MEMBER_URL_PREFIX, id);
+        Long libraryMemberId = libraryMemberService.createLibraryMember(memberMapper.postToCreateParam(post));
+        URI uri = UriCreator.createUri(MEMBER_URL_PREFIX, libraryMemberId);
         return ResponseEntity.created(uri).build();
     }
 

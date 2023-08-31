@@ -19,7 +19,7 @@ public class LibraryBook extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "BOOK_ID")
     private Book book;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "LIBRARY_ID")
     private Library library;
 }

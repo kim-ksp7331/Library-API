@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.entity;
 
 import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,5 +20,5 @@ public class LoanBook {
     private Loan loan;
     @ManyToOne
     @JoinColumn(name = "BOOK_ID")
-    private Book book;
+    private LibraryBook book;
 }
