@@ -1,12 +1,10 @@
 package ksp7331.practice.libraryAPI.loan.entity;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
-import ksp7331.practice.libraryAPI.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,13 +30,14 @@ public class Loan extends BaseTimeEntity {
     public Loan(Long id, LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
         this.id = id;
         this.libraryMember = libraryMember;
-        libraryBooks.forEach(this::addBook);
+        if(libraryBooks != null) libraryBooks.forEach(this::addBook);
     }
 
     public void addBook(LibraryBook book) {
+        if(book == null) return;
         checkBookLoanable();
         LoanBook loanBook = LoanBook.builder()
-                .book(book)
+                .libraryBook(book)
                 .loan(this)
                 .build();
         loanBooks.add(loanBook);

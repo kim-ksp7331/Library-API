@@ -3,6 +3,7 @@ package ksp7331.practice.libraryAPI.config;
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.loan.entity.Loan;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,13 @@ public class DbTestInitializer {
     private List<LibraryMember> libraryMembers = List.of(
             TestEntity.newLibraryMember(1L, 1L, "010-0000-0000")
     );
+    private List<Loan> loans = List.of(
+            Loan.builder().libraryMember(libraryMembers.get(0)).libraryBooks(List.of(
+                    libraryBooks.get(0),
+                    libraryBooks.get(2)
+            )).build()
+    );
+
 
     public DbTestInitializer(TestRepository testRepository) {
         this.testRepository = testRepository;
@@ -47,6 +55,7 @@ public class DbTestInitializer {
         testRepository.saveLibraryBooks(libraryBooks);
         testRepository.saveMembers(members);
         testRepository.saveLibraryMembers(libraryMembers);
+        testRepository.saveLoans(loans);
     }
 
     public List<Book> getBooks() {
@@ -68,6 +77,12 @@ public class DbTestInitializer {
     public List<LibraryMember> getLibraryMembers() {
         return libraryMembers;
     }
+
+    public List<Loan> getLoans() {
+        return loans;
+    }
+
+
 
     private static class TestEntity {
         public static LibraryBook newLibraryBook(Long bookId, Long libraryId) {

@@ -8,7 +8,8 @@ public enum ExceptionCode {
     BOOK_EXISTS(403, "Book Exists"),
     MEMBER_NOT_FOUND(404, "Member Not Found"),
     LIBRARY_NOT_FOUND(404, "Library Not Found"),
-    BOOK_NOT_FOUND(404, "Book Not Found"),;
+    BOOK_NOT_FOUND(404, "Book Not Found"),
+    LOAN_NOT_FOUND(404, "Loan Not Found"),;
     @Getter
     private int status;
     @Getter

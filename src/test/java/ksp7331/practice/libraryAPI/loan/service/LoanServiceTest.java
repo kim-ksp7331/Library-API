@@ -5,6 +5,7 @@ import ksp7331.practice.libraryAPI.book.service.LibraryBookService;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
 import ksp7331.practice.libraryAPI.loan.entity.Loan;
+import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
 import ksp7331.practice.libraryAPI.loan.repository.LoanRepository;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
@@ -18,6 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +34,8 @@ class LoanServiceTest {
     private LibraryMemberService libraryMemberService;
     @Mock
     private LibraryBookService libraryBookService;
+    @Mock
+    private LoanMapper loanMapper;
 
     @Test
     void createLoan() {
@@ -56,5 +60,21 @@ class LoanServiceTest {
 
         // then
         assertThat(result).isEqualTo(loanId);
+    }
+
+    @Test
+    void findLoan() {
+        // given
+        Long loanId = 1L;
+        Loan loan = Loan.builder().build();
+        LoanServiceDTO.Result loanDTO = LoanServiceDTO.Result.builder().build();
+        BDDMockito.given(loanRepository.findByIdFetchJoin(Mockito.anyLong())).willReturn(Optional.of(loan));
+        BDDMockito.given(loanMapper.entitiesToServiceDTOs(loan)).willReturn(loanDTO);
+
+        // when
+        LoanServiceDTO.Result result = loanService.findLoan(loanId);
+
+        // then
+        assertThat(result).isEqualTo(loanDTO);
     }
 }

@@ -6,6 +6,7 @@ import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
 import ksp7331.practice.libraryAPI.loan.entity.Loan;
+import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
 import ksp7331.practice.libraryAPI.loan.repository.LoanRepository;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,6 +24,7 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final LibraryMemberService libraryMemberService;
     private final LibraryBookService libraryBookService;
+    private final LoanMapper loanMapper;
     public Long createLoan(LoanServiceDTO.CreateParam param) {
         LibraryMember libraryMember = libraryMemberService.findVerifiedLibraryMember(param.getLibraryMemberId());
         List<LibraryBook> libraryBooks = libraryBookService.findExistBookInLibrary(libraryMember.getLibrary().getId(), param.getBookIds());
@@ -35,5 +38,14 @@ public class LoanService {
                 .build();
 
         return loanRepository.save(loan).getId();
+    }
+
+    public LoanServiceDTO.Result findLoan(Long loanId) {
+        return loanMapper.entitiesToServiceDTOs(findVerifiedLoan(loanId));
+    }
+
+    private Loan findVerifiedLoan(Long loanId) {
+        Optional<Loan> optionalLoan = loanRepository.findByIdFetchJoin(loanId);
+        return optionalLoan.orElseThrow(() -> new BusinessLogicException(ExceptionCode.LOAN_NOT_FOUND));
     }
 }
