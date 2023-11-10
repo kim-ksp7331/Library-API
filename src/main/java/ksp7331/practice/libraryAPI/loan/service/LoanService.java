@@ -40,6 +40,12 @@ public class LoanService {
         return loanRepository.save(loan).getId();
     }
 
+    public LoanServiceDTO.Result returnBook(LoanServiceDTO.ReturnBookParam param) {
+        Loan loan = findVerifiedLoan(param.getLoanId());
+        loan.returnBooks(param.getBookIds());
+        return loanMapper.entitiesToServiceDTOs(loan);
+    }
+
     public LoanServiceDTO.Result findLoan(Long loanId) {
         return loanMapper.entitiesToServiceDTOs(findVerifiedLoan(loanId));
     }

@@ -34,6 +34,14 @@ public class LoanController {
 
         return ResponseEntity.created(uri).build();
     }
+    @PostMapping("/{loan-id}")
+    public ResponseEntity<LoanControllerDTO.Response> postReturnBook(@PathVariable("loan-id") Long loanId,
+            @RequestBody LoanControllerDTO.ReturnPost dto){
+        LoanServiceDTO.ReturnBookParam param = LoanServiceDTO.ReturnBookParam.builder().loanId(loanId).bookIds(dto.getBookIds()).build();
+        LoanServiceDTO.Result result = loanService.returnBook(param);
+        return ResponseEntity.ok(loanMapper.serviceDTOToControllerDTO(result));
+    }
+
 
     @GetMapping("/{loan-id}")
     public ResponseEntity<LoanControllerDTO.Response> getLoan(@PathVariable("loan-id") Long loanId) {

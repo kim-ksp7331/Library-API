@@ -19,6 +19,15 @@ public class LoanServiceDTO {
     @Getter
     @AllArgsConstructor
     @Builder
+    public static class ReturnBookParam {
+        private Long loanId;
+        private List<Long> bookIds;
+
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
     public static class Result {
         private Long id;
         private Long libraryMemberId;
@@ -30,8 +39,11 @@ public class LoanServiceDTO {
         @AllArgsConstructor
         @Builder
         public static class Book {
+            private Long id;
+            private LocalDateTime returnDate;
             private String name;
             private String author;
+            private String state;
         }
     }
 }

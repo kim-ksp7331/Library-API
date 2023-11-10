@@ -6,6 +6,7 @@ import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
 import ksp7331.practice.libraryAPI.loan.dto.LoanControllerDTO;
 import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
+import ksp7331.practice.libraryAPI.loan.entity.LoanBook;
 import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
 import ksp7331.practice.libraryAPI.loan.service.LoanService;
 import ksp7331.practice.libraryAPI.util.UriCreator;
@@ -72,6 +73,48 @@ class LoanControllerTest {
     }
 
     @Test
+    void postReturnBook() throws Exception {
+        // given
+        List<Long> bookIds = List.of(1L, 2L);
+        Long loanId = 1L;
+        Long libraryMemberId = 1L;
+        String memberName = "kim";
+        String libraryName = "lib1";
+
+        LoanControllerDTO.ReturnPost returnPost = LoanControllerDTO.ReturnPost.builder().bookIds(bookIds).build();
+        LoanServiceDTO.Result result = LoanServiceDTO.Result.builder().build();
+        LoanControllerDTO.Response response = LoanControllerDTO.Response.builder()
+                .id(loanId)
+                .libraryMemberId(libraryMemberId)
+                .memberName(memberName)
+                .libraryName(libraryName)
+                .build();
+
+
+        String content = objectMapper.writeValueAsString(returnPost);
+        BDDMockito.given(loanService.returnBook(Mockito.any(LoanServiceDTO.ReturnBookParam.class))).willReturn(result);
+        BDDMockito.given(loanMapper.serviceDTOToControllerDTO(result)).willReturn(response);
+
+        String urlTemplates = "/members/{library-member-id}/loan/{loan-id}";
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                post(urlTemplates, libraryMemberId, loanId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(loanId))
+                .andExpect(jsonPath("$.libraryMemberId").value(libraryMemberId))
+                .andExpect(jsonPath("$.memberName").value(memberName))
+                .andExpect(jsonPath("$.libraryName").value(libraryName));
+    }
+
+    @Test
     void getLoan() throws Exception {
         // given
         long loanId = 1L;
@@ -83,8 +126,9 @@ class LoanControllerTest {
         int repeat = 2;
         String bookName = "book";
         String author = "author";
+        String bookState = LoanBook.State.BOOK.name();
         List<LoanControllerDTO.Response.Book> books = LongStream.rangeClosed(1, repeat).mapToObj(i -> LoanControllerDTO.Response.Book.builder()
-                .name(bookName + i).author(author + i).build()).collect(Collectors.toList());
+                .name(bookName + i).state(bookState).author(author + i).build()).collect(Collectors.toList());
 
         LoanServiceDTO.Result result = LoanServiceDTO.Result.builder().build();
         LoanControllerDTO.Response response = LoanControllerDTO.Response.builder()
@@ -117,6 +161,7 @@ class LoanControllerTest {
                 .andExpect(jsonPath("$.libraryName").value(libraryName))
                 .andExpect(jsonPath("$.createdDate").value(createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))))
                 .andExpect(jsonPath("$.books[*].name").value(everyItem(is(startsWith(bookName)))))
-                .andExpect(jsonPath("$.books[*].author").value(everyItem(is(startsWith(author)))));
+                .andExpect(jsonPath("$.books[*].author").value(everyItem(is(startsWith(author)))))
+                .andExpect(jsonPath("$.books[*].state").value(everyItem(is(bookState))));
     }
 }

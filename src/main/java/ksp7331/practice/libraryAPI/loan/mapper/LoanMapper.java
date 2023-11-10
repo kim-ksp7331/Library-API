@@ -21,8 +21,11 @@ public class LoanMapper {
                 .createdDate(loan.getCreatedDate())
                 .books(loan.getLoanBooks().stream()
                         .map(loanBook -> LoanServiceDTO.Result.Book.builder()
+                                .id(loanBook.getLibraryBook().getBook().getId())
                                 .name(loanBook.getLibraryBook().getBook().getName())
                                 .author(loanBook.getLibraryBook().getBook().getAuthor())
+                                .returnDate(loanBook.getReturnDate())
+                                .state(loanBook.getState().name())
                                 .build()).collect(Collectors.toList()))
                 .build();
     }
@@ -31,8 +34,11 @@ public class LoanMapper {
         List<LoanServiceDTO.Result.Book> resultBooks = result.getBooks();
         List<LoanControllerDTO.Response.Book> books = resultBooks != null ? resultBooks.stream()
                 .map(book -> LoanControllerDTO.Response.Book.builder()
+                        .id(book.getId())
                         .name(book.getName())
                         .author(book.getAuthor())
+                        .returnDate(book.getReturnDate())
+                        .state(book.getState())
                         .build()).collect(Collectors.toList()) : null;
 
         return LoanControllerDTO.Response.builder()

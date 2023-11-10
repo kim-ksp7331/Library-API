@@ -43,6 +43,14 @@ public class Loan extends BaseTimeEntity {
         loanBooks.add(loanBook);
     }
 
+    public void returnBooks(List<Long> bookIds) {
+        for (LoanBook loanBook : loanBooks) {
+            if (bookIds.contains(loanBook.getLibraryBook().getBook().getId())) {
+                loanBook.returnBook();
+            }
+        }
+    }
+
     private void checkBookLoanable() {
         if (loanBooks.size() >= MAX_LOANABLE_BOOKS) throw new BusinessLogicException(ExceptionCode.LOAN_EXCEEDED);
     }

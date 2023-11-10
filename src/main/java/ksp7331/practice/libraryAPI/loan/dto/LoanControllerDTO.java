@@ -21,6 +21,15 @@ public class LoanControllerDTO {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ReturnPost {
+        private List<Long> bookIds;
+
+    }
+
+    @Getter
+    @AllArgsConstructor
     @Builder
     public static class Response {
         private Long id;
@@ -35,8 +44,11 @@ public class LoanControllerDTO {
         @AllArgsConstructor
         @Builder
         public static class Book {
+            private Long id;
+            private LocalDateTime returnDate;
             private String name;
             private String author;
+            private String state;
         }
 
     }

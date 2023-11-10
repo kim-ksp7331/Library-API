@@ -1,5 +1,6 @@
 package ksp7331.practice.libraryAPI.loan.service;
 
+import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.book.service.LibraryBookService;
 import ksp7331.practice.libraryAPI.library.entity.Library;
@@ -60,6 +61,28 @@ class LoanServiceTest {
 
         // then
         assertThat(result).isEqualTo(loanId);
+    }
+
+    @Test
+    void returnBook() {
+        // given
+        Long loanId = 1L;
+        long bookId = 1L;
+        List<Long> bookIds = List.of(bookId);
+        List<LibraryBook> libraryBooks = List.of(LibraryBook.builder().book(Book.builder().id(bookId).build()).build());
+
+        LoanServiceDTO.ReturnBookParam param = LoanServiceDTO.ReturnBookParam.builder().loanId(loanId).bookIds(bookIds).build();
+        Loan loan = Loan.builder().id(loanId).libraryBooks(libraryBooks).build();
+        LoanServiceDTO.Result resultDTO = LoanServiceDTO.Result.builder().build();
+
+        BDDMockito.given(loanRepository.findByIdFetchJoin(Mockito.anyLong())).willReturn(Optional.of(loan));
+        BDDMockito.given(loanMapper.entitiesToServiceDTOs(loan)).willReturn(resultDTO);
+
+        // when
+        LoanServiceDTO.Result result = loanService.returnBook(param);
+
+        // then
+        assertThat(result).isEqualTo(resultDTO);
     }
 
     @Test
