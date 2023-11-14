@@ -8,6 +8,8 @@ import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +17,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Loan extends BaseTimeEntity {
-    private static int MAX_LOANABLE_BOOKS = 5;
-    private static int MAX_LOANABLE_DAYS = 14;
+    private static final int MAX_LOANABLE_BOOKS = 5;
+    private static final int MAX_LOANABLE_DAYS = 14;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,28 +32,44 @@ public class Loan extends BaseTimeEntity {
     public Loan(Long id, LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
         this.id = id;
         this.libraryMember = libraryMember;
-        if(libraryBooks != null) libraryBooks.forEach(this::addBook);
+        addBooks(libraryBooks);
     }
 
-    public void addBook(LibraryBook book) {
-        if(book == null) return;
-        checkBookLoanable();
-        LoanBook loanBook = LoanBook.builder()
-                .libraryBook(book)
-                .loan(this)
-                .build();
-        loanBooks.add(loanBook);
+    public void addBooks(List<LibraryBook> libraryBooks) {
+        if(libraryBooks == null) return;
+        int count = libraryBooks.size();
+        checkBookLoanable(count);
+        libraryMember.addLoanBooksCount(count);
+        libraryBooks.forEach(book -> {
+            loanBooks.add(LoanBook.builder()
+                    .libraryBook(book)
+                    .loan(this)
+                    .build());
+            book.setState(LibraryBook.State.NOT_LOANABLE);
+        });
     }
 
     public void returnBooks(List<Long> bookIds) {
         for (LoanBook loanBook : loanBooks) {
             if (bookIds.contains(loanBook.getLibraryBook().getBook().getId())) {
                 loanBook.returnBook();
+                libraryMember.addLoanBooksCount(-1);
+                LocalDate returnDate = loanBook.getReturnDate().toLocalDate();
+                int days = Period.between(getCreatedDate().toLocalDate(), returnDate).getDays();
+                if (days > MAX_LOANABLE_DAYS) {
+                    libraryMember.setLoanAvailableDay(returnDate.plusDays(days - MAX_LOANABLE_DAYS));
+                }
             }
         }
     }
 
-    private void checkBookLoanable() {
-        if (loanBooks.size() >= MAX_LOANABLE_BOOKS) throw new BusinessLogicException(ExceptionCode.LOAN_EXCEEDED);
+    private void checkBookLoanable(int count) {
+        if (count + libraryMember.getLoanBooksCount() > MAX_LOANABLE_BOOKS) throw new BusinessLogicException(ExceptionCode.LOAN_EXCEEDED);
     }
+
+    public void checkOverDue() {
+        int days = Period.between(getCreatedDate().toLocalDate(), LocalDate.now()).getDays();
+        if(days > MAX_LOANABLE_DAYS) throw new BusinessLogicException(ExceptionCode.LOAN_RESTRICTED);
+    }
+
 }

@@ -21,13 +21,13 @@ public class LibraryBookRepositoryTest {
     @Test
     void findByLibraryIdAndBookIds() {
         // given
-        Long libraryId = 1L;
-        List<Long> bookIds = List.of(1L, 2L, 4L);
+        Long libraryId = 2L;
+        List<Long> bookIds = List.of(1L, 2L, 3L, 5L);
 
         // when
         List<LibraryBook> libraryBooks = libraryBookRepository.findByLibraryIdAndBookIds(libraryId, bookIds);
 
         // then
-        Assertions.assertThat(libraryBooks).hasSize(2);
+        Assertions.assertThat(libraryBooks).hasSize(1);
     }
 }

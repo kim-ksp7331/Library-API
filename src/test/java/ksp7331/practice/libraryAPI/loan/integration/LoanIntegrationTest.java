@@ -1,6 +1,5 @@
 package ksp7331.practice.libraryAPI.loan.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.IntegrationTest;
 import ksp7331.practice.libraryAPI.book.entity.Book;
@@ -62,7 +61,7 @@ public class LoanIntegrationTest extends IntegrationTest {
     void postReturnBook() throws Exception {
         // given
         long loanId = 1L;
-        long libraryMemberId = 1L;
+        long libraryMemberId = 2L;
         List<Long> bookIds = List.of(1L);
         LoanControllerDTO.ReturnPost returnPost = LoanControllerDTO.ReturnPost.builder().bookIds(bookIds).build();
 
@@ -83,7 +82,7 @@ public class LoanIntegrationTest extends IntegrationTest {
                 .andExpect(jsonPath("$.id").value(loanId))
                 .andExpect(jsonPath("$.libraryMemberId").value(libraryMemberId))
                 .andExpect(jsonPath("$.books[0].state").value(LoanBook.State.RETURN.name()))
-                .andExpect(jsonPath("$.books[1].state").value(LoanBook.State.BOOK.name()));
+                .andExpect(jsonPath("$.books[1].state").value(LoanBook.State.LOANED.name()));
 
     }
 
@@ -91,9 +90,9 @@ public class LoanIntegrationTest extends IntegrationTest {
     void getLoan() throws Exception {
         // given
         long loanId = 1L;
-        long libraryMemberId = 1L;
+        long libraryMemberId = 2L;
         String memberName = dbTestInitializer.getMembers().get(0).getName();
-        String libraryName = dbTestInitializer.getLibraries().get(0).getName();
+        String libraryName = dbTestInitializer.getLibraries().get(1).getName();
         Book book1 = dbTestInitializer.getBooks().get(0);
         Book book2 = dbTestInitializer.getBooks().get(1);
 
@@ -119,7 +118,7 @@ public class LoanIntegrationTest extends IntegrationTest {
                 .andExpect(jsonPath("$.books[0].author").value(book1.getAuthor()))
                 .andExpect(jsonPath("$.books[1].name").value(book2.getName()))
                 .andExpect(jsonPath("$.books[1].author").value(book2.getAuthor()))
-                .andExpect(jsonPath("$.books[*].state").value(everyItem(is(LoanBook.State.BOOK.name()))));
+                .andExpect(jsonPath("$.books[*].state").value(everyItem(is(LoanBook.State.LOANED.name()))));
 
     }
 }

@@ -1,14 +1,8 @@
 package ksp7331.practice.libraryAPI.loan.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ksp7331.practice.libraryAPI.book.entity.QBook;
-import ksp7331.practice.libraryAPI.book.entity.QLibraryBook;
-import ksp7331.practice.libraryAPI.library.entity.QLibrary;
 import ksp7331.practice.libraryAPI.loan.entity.Loan;
-import ksp7331.practice.libraryAPI.loan.entity.QLoan;
-import ksp7331.practice.libraryAPI.loan.entity.QLoanBook;
-import ksp7331.practice.libraryAPI.member.entity.QLibraryMember;
-import ksp7331.practice.libraryAPI.member.entity.QMember;
+import ksp7331.practice.libraryAPI.loan.entity.LoanBook;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -40,5 +34,18 @@ public class LoanCustomRepositoryImpl implements LoanCustomRepository{
                 .innerJoin(libraryBook.book, book).fetchJoin()
                 .fetch();
         return loans.stream().findAny();
+    }
+
+    @Override
+    public List<Loan> findAllNotReturned(Long libraryMemberId) {
+        List<Loan> loans = jpaQueryFactory.selectFrom(loan)
+                .innerJoin(loan.libraryMember, libraryMember).where(libraryMember.id.eq(libraryMemberId)).fetchJoin()
+                .innerJoin(libraryMember.member, member).fetchJoin()
+                .innerJoin(libraryMember.library, library).fetchJoin()
+                .innerJoin(loan.loanBooks, loanBook).where(loanBook.state.eq(LoanBook.State.LOANED)).fetchJoin()
+                .innerJoin(loanBook.libraryBook, libraryBook).fetchJoin()
+                .innerJoin(libraryBook.book, book).fetchJoin()
+                .distinct().fetch();
+        return loans;
     }
 }

@@ -14,7 +14,8 @@ public class LoanBook {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
-    private State state = State.BOOK;
+    @Column(nullable = false)
+    private State state = State.LOANED;
     private LocalDateTime returnDate;
     @ManyToOne
     @JoinColumn(name = "LOAN_ID")
@@ -32,9 +33,10 @@ public class LoanBook {
     public void returnBook() {
         state = State.RETURN;
         returnDate = LocalDateTime.now();
+        getLibraryBook().setState(LibraryBook.State.LOANABLE);
     }
 
     public enum State {
-        BOOK, RETURN
+        LOANED, RETURN
     }
 }

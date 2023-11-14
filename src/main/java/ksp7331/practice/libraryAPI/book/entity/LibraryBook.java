@@ -9,9 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class LibraryBook extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +20,18 @@ public class LibraryBook extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "LIBRARY_ID")
     private Library library;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Setter
+    private State state = State.LOANABLE;
+
+    @Builder
+    public LibraryBook(Book book, Library library) {
+        this.book = book;
+        this.library = library;
+    }
+
+    public enum State {
+        LOANABLE, NOT_LOANABLE
+    }
 }

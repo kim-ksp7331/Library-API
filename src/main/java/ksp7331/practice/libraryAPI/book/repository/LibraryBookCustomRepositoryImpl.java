@@ -20,7 +20,7 @@ public class LibraryBookCustomRepositoryImpl implements LibraryBookCustomReposit
         return jpaQueryFactory.selectFrom(libraryBook)
                 .innerJoin(libraryBook.book).fetchJoin()
                 .where(libraryBook.library.id.eq(libraryId))
-                .where(libraryBook.book.id.in(bookIds))
+                .where(libraryBook.book.id.in(bookIds).and(libraryBook.state.eq(LibraryBook.State.LOANABLE)))
                 .fetch();
     }
 }

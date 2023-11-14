@@ -8,6 +8,8 @@ import ksp7331.practice.libraryAPI.loan.entity.Loan;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,16 @@ public class LibraryMember extends BaseTimeEntity {
     private Library library;
     @OneToMany(mappedBy = "libraryMember", cascade = CascadeType.ALL)
     private List<Phone> phones = new ArrayList<>();
+    @Column(nullable = false)
+    private Integer loanBooksCount = 0;
+    @Column(nullable = false)
+    @Setter
+    private LocalDate loanAvailableDay = LocalDate.EPOCH;
+
+    public void addLoanBooksCount(Integer count) {
+        this.loanBooksCount += count;
+    }
+
     @Builder
     public LibraryMember(Long id, Member member, Library library, String phone) {
         this.id = id;

@@ -80,7 +80,7 @@ public class BookIntegrationTest extends IntegrationTest {
     void postBook() throws Exception {
         // given
         Long libraryId = 2L;
-        Long bookId = 3L;
+        Long bookId = 5L;
 
         String urlTemplate = "/libraries/{library-id}/books/{book-id}";
 

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,8 @@ public class LoanService {
     private final LoanMapper loanMapper;
     public Long createLoan(LoanServiceDTO.CreateParam param) {
         LibraryMember libraryMember = libraryMemberService.findVerifiedLibraryMember(param.getLibraryMemberId());
+        checkLoanable(libraryMember);
+
         List<LibraryBook> libraryBooks = libraryBookService.findExistBookInLibrary(libraryMember.getLibrary().getId(), param.getBookIds());
         // 빌릴 도서가 존재하지 않는 경우 예외 처리
         if(param.getBookIds().size() != libraryBooks.size()) throw new BusinessLogicException(ExceptionCode.BOOK_NOT_FOUND);
@@ -53,5 +56,11 @@ public class LoanService {
     private Loan findVerifiedLoan(Long loanId) {
         Optional<Loan> optionalLoan = loanRepository.findByIdFetchJoin(loanId);
         return optionalLoan.orElseThrow(() -> new BusinessLogicException(ExceptionCode.LOAN_NOT_FOUND));
+    }
+
+    private void checkLoanable(LibraryMember libraryMember) {
+        if(LocalDate.now().isBefore(libraryMember.getLoanAvailableDay())) throw new BusinessLogicException(ExceptionCode.LOAN_RESTRICTED);
+        List<Loan> loans = loanRepository.findAllNotReturned(libraryMember.getId());
+        loans.forEach(Loan::checkOverDue);
     }
 }

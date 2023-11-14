@@ -31,7 +31,7 @@ class LoanRepositoryTest {
         // given
         Long id = 1L;
         Member member = dbTestInitializer.getMembers().get(0);
-        Library library = dbTestInitializer.getLibraries().get(0);
+        Library library = dbTestInitializer.getLibraries().get(1);
         List<Book> books = dbTestInitializer.getBooks();
 
         // when
@@ -51,5 +51,20 @@ class LoanRepositoryTest {
         Book book = books.get(bookIdx);
         assertThat(resultBook.getName()).isEqualTo(book.getName());
         assertThat(resultBook.getAuthor()).isEqualTo(book.getAuthor());
+    }
+
+    @Test
+    void findAllNotReturned() {
+        // given
+        int loanSize = 2;
+        Loan loan = dbTestInitializer.getLoans().get(0);
+        Long libraryMemberId = 2L;
+
+        // when
+        List<Loan> result = loanRepository.findAllNotReturned(libraryMemberId);
+
+        // then
+        assertThat(result).hasSize(loanSize);
+        loan.getLoanBooks().forEach(book -> assertThat(result.get(0).getLoanBooks()).anyMatch(r -> r.getId() == book.getId()));
     }
 }

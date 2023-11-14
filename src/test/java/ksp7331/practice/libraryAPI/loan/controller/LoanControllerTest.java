@@ -1,15 +1,11 @@
 package ksp7331.practice.libraryAPI.loan.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ksp7331.practice.libraryAPI.book.controller.BookController;
-import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
-import ksp7331.practice.libraryAPI.library.service.LibraryService;
 import ksp7331.practice.libraryAPI.loan.dto.LoanControllerDTO;
 import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
 import ksp7331.practice.libraryAPI.loan.entity.LoanBook;
 import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
 import ksp7331.practice.libraryAPI.loan.service.LoanService;
-import ksp7331.practice.libraryAPI.util.UriCreator;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
@@ -20,8 +16,6 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -126,7 +119,7 @@ class LoanControllerTest {
         int repeat = 2;
         String bookName = "book";
         String author = "author";
-        String bookState = LoanBook.State.BOOK.name();
+        String bookState = LoanBook.State.LOANED.name();
         List<LoanControllerDTO.Response.Book> books = LongStream.rangeClosed(1, repeat).mapToObj(i -> LoanControllerDTO.Response.Book.builder()
                 .name(bookName + i).state(bookState).author(author + i).build()).collect(Collectors.toList());
 
