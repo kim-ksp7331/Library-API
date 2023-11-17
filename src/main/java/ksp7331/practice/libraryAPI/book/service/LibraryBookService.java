@@ -21,19 +21,11 @@ public class LibraryBookService {
     private final LibraryService libraryService;
     public void createLibraryBook(Book book, Long libraryId) {
         Library library = libraryService.findVerifiedLibrary(libraryId);
-        verifyExistBook(library, book);
         LibraryBook libraryBook = LibraryBook.builder()
                 .book(book)
                 .library(library)
                 .build();
         libraryBookRepository.save(libraryBook);
-    }
-
-    private void verifyExistBook(Library library, Book book) {
-        Long libraryId = library.getId();
-        if (book.getLibraryBooks().stream().anyMatch(libraryBook -> libraryBook.getLibrary().getId() == libraryId)) {
-            throw new BusinessLogicException(ExceptionCode.BOOK_EXISTS);
-        }
     }
 
     public List<LibraryBook> findExistBookInLibrary(Long libraryId, List<Long> bookIds) {

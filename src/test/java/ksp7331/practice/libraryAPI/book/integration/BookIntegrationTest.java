@@ -75,12 +75,12 @@ public class BookIntegrationTest extends IntegrationTest {
                 .andExpect(header().string("location", is(endsWith(bookId.toString()))));
     }
 
-    @DisplayName("기존 도서 다른 도서관에 등록")
+    @DisplayName("기존 도서 추가 등록")
     @Test
     void postBook() throws Exception {
         // given
         Long libraryId = 2L;
-        Long bookId = 5L;
+        Long bookId = 1L;
 
         String urlTemplate = "/libraries/{library-id}/books/{book-id}";
 

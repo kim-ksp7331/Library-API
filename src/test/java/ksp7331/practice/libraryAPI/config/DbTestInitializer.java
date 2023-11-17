@@ -20,7 +20,8 @@ public class DbTestInitializer {
             Book.builder().name("자바 ORM 표준 JPA 프로그래밍").author("김영한").build(),
             Book.builder().name("Clean Code").author("Robert C. Martin").build(),
             Book.builder().name("혼자 공부하는 컴퓨터 구조+운영체제").author("강민철").build(),
-            Book.builder().name("Java의 정석").author("남궁성").build()
+            Book.builder().name("Java의 정석").author("남궁성").build(),
+            Book.builder().name("토비의 스프링").author("토비").build()
     );
     private List<Library> libraries = List.of(
             Library.builder().name("서울 도서관").build(),
@@ -35,14 +36,19 @@ public class DbTestInitializer {
             TestEntity.newLibraryBook(3L, 2L),
             TestEntity.newLibraryBook(4L, 1L),
             TestEntity.newLibraryBook(4L, 2L),
-            TestEntity.newLibraryBook(5L, 1L)
+            TestEntity.newLibraryBook(5L, 1L),
+            TestEntity.newLibraryBook(5L, 2L),
+            TestEntity.newLibraryBook(6L, 1L),
+            TestEntity.newLibraryBook(6L, 2L)
     );
     private List<Member> members = List.of(
-        Member.builder().name("kim").build()
+            Member.builder().name("kim").build(),
+            Member.builder().name("park").build()
     );
     private List<LibraryMember> libraryMembers = List.of(
             TestEntity.newLibraryMember(1L, 1L, "010-0000-0000"),
-            TestEntity.newLibraryMember(1L, 2L, "010-0000-0000")
+            TestEntity.newLibraryMember(1L, 2L, "010-0000-0000"),
+            TestEntity.newLibraryMember(2L, 2L, "010-0000-1111")
     );
     private List<Loan> loans = List.of(
             Loan.builder().libraryMember(libraryMembers.get(1)).libraryBooks(List.of(

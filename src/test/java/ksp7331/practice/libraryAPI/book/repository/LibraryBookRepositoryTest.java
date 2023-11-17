@@ -28,6 +28,6 @@ public class LibraryBookRepositoryTest {
         List<LibraryBook> libraryBooks = libraryBookRepository.findByLibraryIdAndBookIds(libraryId, bookIds);
 
         // then
-        Assertions.assertThat(libraryBooks).hasSize(1);
+        Assertions.assertThat(libraryBooks).hasSize(2);
     }
 }

@@ -14,6 +14,7 @@ import ksp7331.practice.libraryAPI.loan.repository.LoanRepository;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -47,6 +48,7 @@ class LoanServiceTest {
     private LoanMapper loanMapper;
 
     @Test
+    @DisplayName("Loan 엔티티 생성")
     void createLoan() {
         // given
         long libraryMemberId = 1L;
@@ -73,6 +75,7 @@ class LoanServiceTest {
     }
 
     @Test
+    @DisplayName("Loan 엔티티 생성 시 한도 이상의 책을 대출하는 경우")
     void createLoanWithExceededBooks() {
         // given
         long libraryMemberId = 1L;
@@ -99,6 +102,7 @@ class LoanServiceTest {
     }
 
     @Test
+    @DisplayName("연체중인 상황에서 Loan 엔티티를 생성하는 경우")
     void createLoanWhenOverbooked() throws NoSuchFieldException, IllegalAccessException {
         // given
         long libraryMemberId = 1L;
@@ -125,6 +129,7 @@ class LoanServiceTest {
     }
 
     @Test
+    @DisplayName("연체 후 반납으로 인해 설정된 대출 가능 일자 전에 Loan 엔티티를 생성한 경우")
     void createLoanBeforeLoanableDay() {
         // given
         long libraryMemberId = 1L;
@@ -142,6 +147,7 @@ class LoanServiceTest {
     }
 
     @Test
+    @DisplayName("Loan 엔티티에 있는 도서중 일부를 반납")
     void returnBook() throws NoSuchFieldException, IllegalAccessException {
         // given
         Long loanId = 1L;
@@ -169,6 +175,7 @@ class LoanServiceTest {
     }
 
     @Test
+    @DisplayName("Loan 엔티티 조회")
     void findLoan() {
         // given
         Long loanId = 1L;
