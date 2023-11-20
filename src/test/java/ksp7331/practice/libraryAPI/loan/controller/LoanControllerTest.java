@@ -119,9 +119,10 @@ class LoanControllerTest {
         int repeat = 2;
         String bookName = "book";
         String author = "author";
+        String publisher = "publisher";
         String bookState = LoanBook.State.LOANED.name();
         List<LoanControllerDTO.Response.Book> books = LongStream.rangeClosed(1, repeat).mapToObj(i -> LoanControllerDTO.Response.Book.builder()
-                .name(bookName + i).state(bookState).author(author + i).build()).collect(Collectors.toList());
+                .name(bookName + i).state(bookState).author(author + i).publisher(publisher + i).build()).collect(Collectors.toList());
 
         LoanServiceDTO.Result result = LoanServiceDTO.Result.builder().build();
         LoanControllerDTO.Response response = LoanControllerDTO.Response.builder()
@@ -155,6 +156,7 @@ class LoanControllerTest {
                 .andExpect(jsonPath("$.createdDate").value(createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))))
                 .andExpect(jsonPath("$.books[*].name").value(everyItem(is(startsWith(bookName)))))
                 .andExpect(jsonPath("$.books[*].author").value(everyItem(is(startsWith(author)))))
+                .andExpect(jsonPath("$.books[*].publisher").value(everyItem(is(startsWith(publisher)))))
                 .andExpect(jsonPath("$.books[*].state").value(everyItem(is(bookState))));
     }
 }

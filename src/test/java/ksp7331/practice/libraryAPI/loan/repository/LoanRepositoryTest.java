@@ -51,6 +51,7 @@ class LoanRepositoryTest {
         Book book = books.get(bookIdx);
         assertThat(resultBook.getName()).isEqualTo(book.getName());
         assertThat(resultBook.getAuthor()).isEqualTo(book.getAuthor());
+        assertThat(resultBook.getPublisher()).isEqualTo(book.getPublisher());
     }
 
     @Test

@@ -51,10 +51,12 @@ public class BookIntegrationTest extends IntegrationTest {
         // given
         String name = "book1";
         String author = "author1";
+        String publisher = "publisher1";
         Long libraryId = 1L;
         Map<String, String> post = new HashMap<>();
         post.put("name", name);
         post.put("author", author);
+        post.put("publisher", publisher);
 
         String content = objectMapper.writeValueAsString(post);
         Long bookId = (long)dbTestInitializer.getBooks().size() + 1;
@@ -115,7 +117,8 @@ public class BookIntegrationTest extends IntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bookId").value(bookId))
                 .andExpect(jsonPath("$.name").value(book.getName()))
-                .andExpect(jsonPath("$.author").value(book.getAuthor()));
+                .andExpect(jsonPath("$.author").value(book.getAuthor()))
+                .andExpect(jsonPath("$.publisher").value(book.getPublisher()));
         for (int i = 0; i < 2; i++) {
             actions
                     .andExpect(jsonPath("$.libraries[%d].id", i).value(libraries.get(i).getId()))

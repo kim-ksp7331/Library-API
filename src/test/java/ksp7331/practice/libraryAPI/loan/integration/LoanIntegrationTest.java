@@ -166,8 +166,10 @@ public class LoanIntegrationTest extends IntegrationTest {
                 .andExpect(jsonPath("$.libraryName").value(libraryName))
                 .andExpect(jsonPath("$.books[0].name").value(book1.getName()))
                 .andExpect(jsonPath("$.books[0].author").value(book1.getAuthor()))
+                .andExpect(jsonPath("$.books[0].publisher").value(book1.getPublisher()))
                 .andExpect(jsonPath("$.books[1].name").value(book2.getName()))
                 .andExpect(jsonPath("$.books[1].author").value(book2.getAuthor()))
+                .andExpect(jsonPath("$.books[1].publisher").value(book2.getPublisher()))
                 .andExpect(jsonPath("$.books[*].state").value(everyItem(is(LoanBook.State.LOANED.name()))));
 
     }

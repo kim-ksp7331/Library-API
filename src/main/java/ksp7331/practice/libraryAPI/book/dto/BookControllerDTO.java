@@ -14,6 +14,7 @@ public class BookControllerDTO {
     public static class Post {
         private String name;
         private String author;
+        private String publisher;
     }
 
     @Getter
@@ -23,6 +24,7 @@ public class BookControllerDTO {
         private Long bookId;
         private String name;
         private String author;
+        private String publisher;
         private List<LibraryControllerDTO.Response> libraries;
     }
 }

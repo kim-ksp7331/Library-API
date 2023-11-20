@@ -20,6 +20,7 @@ public class BookMapper {
         return BookServiceDTO.CreateParam.builder()
                 .name(post.getName())
                 .author(post.getAuthor())
+                .publisher(post.getPublisher())
                 .libraryId(libraryId)
                 .build();
     }
@@ -27,6 +28,7 @@ public class BookMapper {
         return Book.builder()
                 .name(createParam.getName())
                 .author(createParam.getAuthor())
+                .publisher(createParam.getPublisher())
                 .build();
     }
 
@@ -35,6 +37,7 @@ public class BookMapper {
                 .bookId(book.getId())
                 .name(book.getName())
                 .author(book.getAuthor())
+                .publisher(book.getPublisher())
                 .libraries(libraryMapper.entitiesToServiceDTOs(book.getLibraryBooks().stream()
                         .map(lb -> lb.getLibrary()).collect(Collectors.toList())))
                 .build();
@@ -45,6 +48,7 @@ public class BookMapper {
                 .bookId(result.getBookId())
                 .name(result.getName())
                 .author(result.getAuthor())
+                .publisher(result.getPublisher())
                 .libraries(libraryMapper.ServiceDTOsToControllerDTOs(result.getLibraries()))
                 .build();
     }

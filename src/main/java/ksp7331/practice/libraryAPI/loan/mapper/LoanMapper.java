@@ -24,6 +24,7 @@ public class LoanMapper {
                                 .id(loanBook.getLibraryBook().getBook().getId())
                                 .name(loanBook.getLibraryBook().getBook().getName())
                                 .author(loanBook.getLibraryBook().getBook().getAuthor())
+                                .publisher(loanBook.getLibraryBook().getBook().getPublisher())
                                 .returnDate(loanBook.getReturnDate())
                                 .state(loanBook.getState().name())
                                 .build()).collect(Collectors.toList()))
@@ -37,6 +38,7 @@ public class LoanMapper {
                         .id(book.getId())
                         .name(book.getName())
                         .author(book.getAuthor())
+                        .publisher(book.getPublisher())
                         .returnDate(book.getReturnDate())
                         .state(book.getState())
                         .build()).collect(Collectors.toList()) : null;

@@ -43,6 +43,7 @@ public class LoanServiceDTO {
             private LocalDateTime returnDate;
             private String name;
             private String author;
+            private String publisher;
             private String state;
         }
     }

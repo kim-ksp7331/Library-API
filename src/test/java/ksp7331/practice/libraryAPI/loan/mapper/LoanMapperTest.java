@@ -42,8 +42,9 @@ class LoanMapperTest {
         int repeat = 2;
         String bookName = "book";
         String author = "author";
+        String publisher = "publisher";
         List<LibraryBook> libraryBooks = LongStream.rangeClosed(1, repeat).mapToObj(i -> LibraryBook.builder().library(library)
-                .book(Book.builder().id(i).name(bookName + i).author(author + i).build()).build()).collect(Collectors.toList());
+                .book(Book.builder().id(i).name(bookName + i).author(author + i).publisher(publisher + i).build()).build()).collect(Collectors.toList());
 
         Loan loan = Loan.builder()
                 .id(loanId)
@@ -63,6 +64,7 @@ class LoanMapperTest {
             assertThat(book.getId()).isEqualTo(i + 1);
             assertThat(book.getName()).startsWith(bookName);
             assertThat(book.getAuthor()).startsWith(author);
+            assertThat(book.getPublisher()).startsWith(publisher);
         });
     }
 
@@ -78,8 +80,9 @@ class LoanMapperTest {
         int repeat = 2;
         String bookName = "book";
         String author = "author";
+        String publisher = "publisher";
         List<LoanServiceDTO.Result.Book> books = LongStream.rangeClosed(1, repeat).mapToObj(i -> LoanServiceDTO.Result.Book.builder()
-                .id(i).name(bookName + i).author(author + i).build()).collect(Collectors.toList());
+                .id(i).name(bookName + i).author(author + i).publisher(publisher + i).build()).collect(Collectors.toList());
 
         LoanServiceDTO.Result loanDTO = LoanServiceDTO.Result.builder()
                 .id(loanId)
@@ -104,6 +107,7 @@ class LoanMapperTest {
             assertThat(book.getId()).isEqualTo(i + 1);
             assertThat(book.getName()).startsWith(bookName);
             assertThat(book.getAuthor()).startsWith(author);
+            assertThat(book.getPublisher()).startsWith(publisher);
         });
     }
 }

@@ -14,6 +14,7 @@ public class BookServiceDTO {
     public static class CreateParam {
         private String name;
         private String author;
+        private String publisher;
         private Long libraryId;
     }
 
@@ -32,6 +33,7 @@ public class BookServiceDTO {
         private Long bookId;
         private String name;
         private String author;
+        private String publisher;
         private List<LibraryServiceDTO.Result> libraries;
     }
 }

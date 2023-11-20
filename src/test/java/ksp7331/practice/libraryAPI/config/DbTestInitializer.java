@@ -16,12 +16,12 @@ import java.util.List;
 public class DbTestInitializer {
     private final TestRepository testRepository;
     private List<Book> books = List.of(
-            Book.builder().name("Effective Java").author("Joshua Bloch").build(),
-            Book.builder().name("자바 ORM 표준 JPA 프로그래밍").author("김영한").build(),
-            Book.builder().name("Clean Code").author("Robert C. Martin").build(),
-            Book.builder().name("혼자 공부하는 컴퓨터 구조+운영체제").author("강민철").build(),
-            Book.builder().name("Java의 정석").author("남궁성").build(),
-            Book.builder().name("토비의 스프링").author("토비").build()
+            Book.builder().name("Effective Java").author("Joshua Bloch").publisher("인사이트(insight)").build(),
+            Book.builder().name("자바 ORM 표준 JPA 프로그래밍").author("김영한").publisher("에이콘출판사").build(),
+            Book.builder().name("Clean Code").author("Robert C. Martin").publisher("인사이트(insight)").build(),
+            Book.builder().name("혼자 공부하는 컴퓨터 구조+운영체제").author("강민철").publisher("한빛미디어").build(),
+            Book.builder().name("Java의 정석").author("남궁성").publisher("도우출판").build(),
+            Book.builder().name("토비의 스프링").author("토비").publisher("에이콘출판").build()
     );
     private List<Library> libraries = List.of(
             Library.builder().name("서울 도서관").build(),

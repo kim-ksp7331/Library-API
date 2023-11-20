@@ -17,12 +17,15 @@ public class Book {
     private String name;
     @Column(nullable = false, length = 20)
     private String author;
+    @Column(nullable = false, length = 20)
+    private String publisher;
 
     @Builder
-    public Book(Long id, String name, String author) {
+    public Book(Long id, String name, String author, String publisher) {
         this.id = id;
         this.name = name;
         this.author = author;
+        this.publisher = publisher;
     }
     @OneToMany(mappedBy = "book")
     private List<LibraryBook> libraryBooks = new ArrayList<>();

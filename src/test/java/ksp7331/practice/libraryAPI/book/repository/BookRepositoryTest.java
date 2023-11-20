@@ -44,6 +44,7 @@ class BookRepositoryTest {
         Book result = optionalBook.get();
         assertThat(result.getName()).isEqualTo(expected.getName());
         assertThat(result.getAuthor()).isEqualTo(expected.getAuthor());
+        assertThat(result.getPublisher()).isEqualTo(expected.getPublisher());
         for (int i = 0; i < 2; i++) {
             assertLibrary(result, i, libraries.get(i).getName());
         }
