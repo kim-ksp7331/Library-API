@@ -16,6 +16,13 @@ public class BookControllerDTO {
         private String author;
         private String publisher;
     }
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class FindPage {
+        private int page;
+        private int size;
+    }
 
     @Getter
     @AllArgsConstructor

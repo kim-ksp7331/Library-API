@@ -13,10 +13,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -54,4 +60,19 @@ class BookRepositoryTest {
         assertThat(result.getLibraryBooks().get(index).getLibrary().getName()).isEqualTo(libraryName);
     }
 
+    @Test
+    void findAllPagination() {
+        // given
+        int size = 4;
+        Pageable pageable = PageRequest.of(0, size, Sort.by("name").ascending());
+        String[] bookNames = dbTestInitializer.getBooks()
+                .stream().map(b -> b.getName()).sorted().limit(size).toArray(String[]::new);
+
+        // when
+        Page<Book> bookPage = bookRepository.findAllPagination(pageable);
+
+        // then
+        assertThat(bookPage).hasSize(size);
+        assertThat(bookPage).extracting(Book::getName).containsExactly(bookNames);
+    }
 }

@@ -25,7 +25,13 @@ public class BookServiceDTO {
         private Long bookId;
         private Long libraryId;
     }
-
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class PageParam {
+        private int page;
+        private int size;
+    }
     @Getter
     @AllArgsConstructor
     @Builder

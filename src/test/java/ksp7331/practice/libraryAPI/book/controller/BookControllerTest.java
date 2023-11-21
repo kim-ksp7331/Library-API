@@ -1,20 +1,22 @@
 package ksp7331.practice.libraryAPI.book.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.book.dto.BookControllerDTO;
 import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
 import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
 import ksp7331.practice.libraryAPI.book.service.BookService;
+import ksp7331.practice.libraryAPI.common.dto.MultiResponseDTO;
 import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -109,7 +111,7 @@ class BookControllerTest {
                 .bookId(bookId).name(name).author(author).publisher(publisher).libraries(List.of(libraryResponse)).build();
 
         BDDMockito.given(bookService.findBook(Mockito.anyLong())).willReturn(BookServiceDTO.Result.builder().build());
-        BDDMockito.given(bookMapper.ServiceDTOToControllerDTO(Mockito.any(BookServiceDTO.Result.class)))
+        BDDMockito.given(bookMapper.serviceDTOToControllerDTO(Mockito.any(BookServiceDTO.Result.class)))
                 .willReturn(response);
 
         String urlTemplate = "/books/{book-id}";
@@ -129,5 +131,45 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.publisher").value(publisher))
                 .andExpect(jsonPath("$.libraries[0].id").value(libraryId))
                 .andExpect(jsonPath("$.libraries[0].name").value(libraryName));
+    }
+
+    @Test
+    void getBooks() throws Exception {
+        // given
+        int page = 1;
+        int size = 3;
+        String urlTemplate = "/books";
+
+        BookServiceDTO.PageParam param = BookServiceDTO.PageParam.builder().build();
+        Page<BookServiceDTO.Result> results = new PageImpl<>(List.of(BookServiceDTO.Result.builder().build()));
+
+        long bookId = 1L;
+        String name = "book1";
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<BookControllerDTO.Response> bookList = List.of(BookControllerDTO.Response.builder().bookId(bookId).name(name).build());
+        Page<BookControllerDTO.Response> responses = new PageImpl<>(bookList, pageable, bookList.size());
+        MultiResponseDTO<BookControllerDTO.Response> dto = MultiResponseDTO.<BookControllerDTO.Response>builder()
+                .data(responses.getContent()).page(responses).build();
+
+        BDDMockito.given(bookMapper.controllerDTOToServiceDTOForPage(Mockito.any(BookControllerDTO.FindPage.class))).willReturn(param);
+        BDDMockito.given(bookService.findBooks(param)).willReturn(results);
+        BDDMockito.given(bookMapper.serviceDTOsToControllerDTO(results)).willReturn(dto);
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get(urlTemplate)
+                        .queryParam("page", String.valueOf(page))
+                        .queryParam("size", String.valueOf(size))
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].bookId").value(bookId))
+                .andExpect(jsonPath("$.data[0].name").value(name))
+                .andExpect(jsonPath("$.pageInfo.page").value(page))
+                .andExpect(jsonPath("$.pageInfo.size").value(size));
     }
 }

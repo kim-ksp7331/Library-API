@@ -3,9 +3,12 @@ package ksp7331.practice.libraryAPI.book.mapper;
 import ksp7331.practice.libraryAPI.book.dto.BookControllerDTO;
 import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
 import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.common.dto.MultiResponseDTO;
 import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,7 +27,7 @@ public class BookMapper {
                 .libraryId(libraryId)
                 .build();
     }
-    public Book ServiceDTOToEntity(BookServiceDTO.CreateParam createParam) {
+    public Book serviceDTOToEntity(BookServiceDTO.CreateParam createParam) {
         return Book.builder()
                 .name(createParam.getName())
                 .author(createParam.getAuthor())
@@ -32,7 +35,11 @@ public class BookMapper {
                 .build();
     }
 
-    public BookServiceDTO.Result EntityToServiceDTO(Book book) {
+    public BookServiceDTO.PageParam controllerDTOToServiceDTOForPage(BookControllerDTO.FindPage dto) {
+        return BookServiceDTO.PageParam.builder().page(dto.getPage()).size(dto.getSize()).build();
+    }
+
+    public BookServiceDTO.Result entityToServiceDTO(Book book) {
         return BookServiceDTO.Result.builder()
                 .bookId(book.getId())
                 .name(book.getName())
@@ -43,7 +50,7 @@ public class BookMapper {
                 .build();
     }
 
-    public BookControllerDTO.Response ServiceDTOToControllerDTO(BookServiceDTO.Result result) {
+    public BookControllerDTO.Response serviceDTOToControllerDTO(BookServiceDTO.Result result) {
         return BookControllerDTO.Response.builder()
                 .bookId(result.getBookId())
                 .name(result.getName())
@@ -51,5 +58,14 @@ public class BookMapper {
                 .publisher(result.getPublisher())
                 .libraries(libraryMapper.ServiceDTOsToControllerDTOs(result.getLibraries()))
                 .build();
+    }
+
+    public Page<BookServiceDTO.Result> entitiesToServiceDTOs(Page<Book> books) {
+        return books.map(this::entityToServiceDTO);
+    }
+
+    public MultiResponseDTO<BookControllerDTO.Response> serviceDTOsToControllerDTO(Page<BookServiceDTO.Result> results) {
+        Page<BookControllerDTO.Response> responses = results.map(this::serviceDTOToControllerDTO);
+        return MultiResponseDTO.<BookControllerDTO.Response>builder().data(responses.getContent()).page(responses).build();
     }
 }

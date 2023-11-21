@@ -125,4 +125,32 @@ public class BookIntegrationTest extends IntegrationTest {
                     .andExpect(jsonPath("$.libraries[%d].name", i).value(libraries.get(i).getName()));
         }
     }
+    @Test
+    @DisplayName("페이지네이션을 통한 도서 조회")
+    void getBooks() throws Exception {
+        // given
+        int page = 1;
+        int size = 3;
+        String urlTemplate = "/books";
+        String[] bookNames = dbTestInitializer.getBooks()
+                .stream().map(b -> b.getName()).sorted().limit(size).toArray(String[]::new);
+
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get(urlTemplate)
+                        .queryParam("page", String.valueOf(page))
+                        .queryParam("size", String.valueOf(size))
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pageInfo.page").value(page))
+                .andExpect(jsonPath("$.pageInfo.size").value(size));
+        for (int i = 0; i < 3; i++) {
+            actions.andExpect(jsonPath("$.data[%d].name", i).value(bookNames[i]));
+        }
+    }
 }

@@ -8,7 +8,6 @@ import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
 import ksp7331.practice.libraryAPI.library.dto.LibraryServiceDTO;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -17,13 +16,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookMapperTest {
@@ -61,7 +56,7 @@ class BookMapperTest {
         BookServiceDTO.CreateParam createParam = BookServiceDTO.CreateParam
                 .builder().name(name).author(author).publisher(publisher).libraryId(libraryId).build();
         // when
-        Book book = bookMapper.ServiceDTOToEntity(createParam);
+        Book book = bookMapper.serviceDTOToEntity(createParam);
 
         // then
         assertThat(book.getName()).isEqualTo(name);
@@ -85,7 +80,7 @@ class BookMapperTest {
         BDDMockito.given(libraryMapper.entitiesToServiceDTOs(Mockito.anyList())).willReturn(List.of(libraryResult));
 
         // when
-        BookServiceDTO.Result result = bookMapper.EntityToServiceDTO(book);
+        BookServiceDTO.Result result = bookMapper.entityToServiceDTO(book);
 
         // then
         assertThat(result.getBookId()).isEqualTo(bookId);
@@ -113,7 +108,7 @@ class BookMapperTest {
         BDDMockito.given(libraryMapper.ServiceDTOsToControllerDTOs(Mockito.anyList())).willReturn(List.of(libraryResponse));
 
         // when
-        BookControllerDTO.Response response = bookMapper.ServiceDTOToControllerDTO(result);
+        BookControllerDTO.Response response = bookMapper.serviceDTOToControllerDTO(result);
 
         // then
         assertThat(response.getBookId()).isEqualTo(bookId);

@@ -4,8 +4,10 @@ import ksp7331.practice.libraryAPI.book.dto.BookControllerDTO;
 import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
 import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
 import ksp7331.practice.libraryAPI.book.service.BookService;
+import ksp7331.practice.libraryAPI.common.dto.MultiResponseDTO;
 import ksp7331.practice.libraryAPI.util.UriCreator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +38,13 @@ public class BookController {
     }
     @GetMapping("/books/{book-id}")
     public ResponseEntity<BookControllerDTO.Response> getBook(@PathVariable("book-id")Long bookId) {
-        BookControllerDTO.Response response = bookMapper.ServiceDTOToControllerDTO(bookService.findBook(bookId));
+        BookControllerDTO.Response response = bookMapper.serviceDTOToControllerDTO(bookService.findBook(bookId));
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/books")
+    public ResponseEntity<MultiResponseDTO<BookControllerDTO.Response>> getBooks(@ModelAttribute BookControllerDTO.FindPage dto) {
+        Page<BookServiceDTO.Result> books = bookService.findBooks(bookMapper.controllerDTOToServiceDTOForPage(dto));
+        return ResponseEntity.ok(bookMapper.serviceDTOsToControllerDTO(books));
     }
 }
