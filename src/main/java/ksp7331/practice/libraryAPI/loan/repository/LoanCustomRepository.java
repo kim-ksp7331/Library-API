@@ -10,4 +10,6 @@ public interface LoanCustomRepository {
 
 
     List<Loan> findAllNotReturned(Long libraryMemberId);
+
+    List<Loan> findByLibraryMemberIdAndMonth(Long libraryMemberId, int year, int month);
 }

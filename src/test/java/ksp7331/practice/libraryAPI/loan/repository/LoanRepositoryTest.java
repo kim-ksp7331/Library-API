@@ -5,6 +5,7 @@ import ksp7331.practice.libraryAPI.config.DbTestConfig;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.loan.entity.Loan;
+import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,5 +70,24 @@ class LoanRepositoryTest {
         // then
         assertThat(result).hasSize(loanSize);
         loan.getLoanBooks().forEach(book -> assertThat(result.get(0).getLoanBooks()).anyMatch(r -> r.getId() == book.getId()));
+    }
+
+    @Test
+    void findByLibraryMemberIdAndMonth() {
+        // given
+        List<Loan> loans = dbTestInitializer.getLoans().stream().filter(loan -> {
+            LibraryMember libraryMember = loan.getLibraryMember();
+            return libraryMember.getMember().getId().equals(1L) && libraryMember.getLibrary().getId().equals(2L);
+        }).collect(Collectors.toList());
+        Long libraryMemberId = 2L;
+        int year = LocalDate.now().getYear();
+        int month = LocalDate.now().getMonthValue() - 1;
+
+        // when
+        List<Loan> result = loanRepository.findByLibraryMemberIdAndMonth(libraryMemberId, year, month);
+
+        // then
+        assertThat(result).hasSize(loans.size());
+
     }
 }

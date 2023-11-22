@@ -8,7 +8,6 @@ import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
 import ksp7331.practice.libraryAPI.loan.entity.Loan;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -18,7 +17,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class LoanMapperTest {
     private LoanMapper loanMapper = new LoanMapper();
@@ -53,7 +51,7 @@ class LoanMapperTest {
                 .build();
 
         // when
-        LoanServiceDTO.Result result = loanMapper.entitiesToServiceDTOs(loan);
+        LoanServiceDTO.Result result = loanMapper.entityToServiceDTO(loan);
 
         // then
         assertThat(result.getId()).isEqualTo(loanId);

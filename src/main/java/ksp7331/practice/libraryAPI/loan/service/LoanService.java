@@ -46,11 +46,16 @@ public class LoanService {
     public LoanServiceDTO.Result returnBook(LoanServiceDTO.ReturnBookParam param) {
         Loan loan = findVerifiedLoan(param.getLoanId());
         loan.returnBooks(param.getBookIds());
-        return loanMapper.entitiesToServiceDTOs(loan);
+        return loanMapper.entityToServiceDTO(loan);
     }
 
     public LoanServiceDTO.Result findLoan(Long loanId) {
-        return loanMapper.entitiesToServiceDTOs(findVerifiedLoan(loanId));
+        return loanMapper.entityToServiceDTO(findVerifiedLoan(loanId));
+    }
+
+    public List<LoanServiceDTO.Result> findLoanByMonth(Long libraryMemberId, int year, int month) {
+        List<Loan> loans = loanRepository.findByLibraryMemberIdAndMonth(libraryMemberId, year, month);
+        return loanMapper.entitiesToServiceDTO(loans);
     }
 
     private Loan findVerifiedLoan(Long loanId) {

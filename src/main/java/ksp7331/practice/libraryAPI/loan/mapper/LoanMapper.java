@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class LoanMapper {
-    public LoanServiceDTO.Result entitiesToServiceDTOs(Loan loan) {
+    public LoanServiceDTO.Result entityToServiceDTO(Loan loan) {
         LibraryMember libraryMember = loan.getLibraryMember();
         return LoanServiceDTO.Result.builder()
                 .id(loan.getId())
@@ -51,6 +51,14 @@ public class LoanMapper {
                 .createdDate(result.getCreatedDate())
                 .books(books)
                 .build();
+    }
+
+    public List<LoanServiceDTO.Result> entitiesToServiceDTO(List<Loan> loans) {
+        return loans.stream().map(this::entityToServiceDTO).collect(Collectors.toList());
+    }
+
+    public List<LoanControllerDTO.Response> serviceDTOsToControllerDTOs(List<LoanServiceDTO.Result> results) {
+        return results.stream().map(this::serviceDTOToControllerDTO).collect(Collectors.toList());
     }
 
 }

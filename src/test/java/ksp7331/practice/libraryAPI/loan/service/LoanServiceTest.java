@@ -13,7 +13,6 @@ import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
 import ksp7331.practice.libraryAPI.loan.repository.LoanRepository;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -165,7 +164,7 @@ class LoanServiceTest {
         field.set(loan, LocalDateTime.now());
 
         BDDMockito.given(loanRepository.findByIdFetchJoin(Mockito.anyLong())).willReturn(Optional.of(loan));
-        BDDMockito.given(loanMapper.entitiesToServiceDTOs(loan)).willReturn(resultDTO);
+        BDDMockito.given(loanMapper.entityToServiceDTO(loan)).willReturn(resultDTO);
 
         // when
         LoanServiceDTO.Result result = loanService.returnBook(param);
@@ -182,7 +181,7 @@ class LoanServiceTest {
         Loan loan = Loan.builder().build();
         LoanServiceDTO.Result loanDTO = LoanServiceDTO.Result.builder().build();
         BDDMockito.given(loanRepository.findByIdFetchJoin(Mockito.anyLong())).willReturn(Optional.of(loan));
-        BDDMockito.given(loanMapper.entitiesToServiceDTOs(loan)).willReturn(loanDTO);
+        BDDMockito.given(loanMapper.entityToServiceDTO(loan)).willReturn(loanDTO);
 
         // when
         LoanServiceDTO.Result result = loanService.findLoan(loanId);

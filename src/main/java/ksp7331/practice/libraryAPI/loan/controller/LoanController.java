@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/members/{library-member-id}/loan")
@@ -47,5 +48,11 @@ public class LoanController {
     public ResponseEntity<LoanControllerDTO.Response> getLoan(@PathVariable("loan-id") Long loanId) {
         LoanServiceDTO.Result result = loanService.findLoan(loanId);
         return ResponseEntity.ok(loanMapper.serviceDTOToControllerDTO(result));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<LoanControllerDTO.Response>> getLoanByMonth(@PathVariable("library-member-id") Long libraryMemberId, @RequestParam int year, @RequestParam int month) {
+        List<LoanServiceDTO.Result> results = loanService.findLoanByMonth(libraryMemberId, year, month);
+        return ResponseEntity.ok(loanMapper.serviceDTOsToControllerDTOs(results));
     }
 }
