@@ -1,0 +1,171 @@
+= 도서 대출 어플리케이션
+:sectnums:
+:toc: left
+:toclevels: 4
+:toc-title: Table of Contents
+:source-highlighter: prettify
+
+***
+== 회원
+=== 회원가입
+.http-request
+include::{snippets}/post-member/http-request.adoc[]
+
+.request-fields
+include::{snippets}/post-member/request-fields.adoc[]
+
+.http-response
+include::{snippets}/post-member/http-response.adoc[]
+
+.response-headers
+include::{snippets}/post-member/response-headers.adoc[]
+
+=== 회원 탈퇴
+.http-request
+include::{snippets}/delete-member/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/delete-member/path-parameters.adoc[]
+
+.http-response
+include::{snippets}/delete-member/http-response.adoc[]
+
+== 도서관
+=== 도서관 등록
+.http-request
+include::{snippets}/post-library/http-request.adoc[]
+
+.request-fields
+include::{snippets}/post-library/request-fields.adoc[]
+
+.http-response
+include::{snippets}/post-library/http-response.adoc[]
+
+.response-headers
+include::{snippets}/post-library/response-headers.adoc[]
+
+=== 도서관 목록 조회
+.http-request
+include::{snippets}/get-libraries/http-request.adoc[]
+
+.http-response
+include::{snippets}/get-libraries/http-response.adoc[]
+
+.response-fields
+include::{snippets}/get-libraries/response-fields.adoc[]
+
+== 도서
+=== 도서 신규 등록
+.http-request
+include::{snippets}/post-new-book/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/post-new-book/path-parameters.adoc[]
+
+.request-fields
+include::{snippets}/post-new-book/request-fields.adoc[]
+
+.http-response
+include::{snippets}/post-new-book/http-response.adoc[]
+
+.response-headers
+include::{snippets}/post-new-book/response-headers.adoc[]
+
+=== 기존 도서 다른 도서관에 등록
+
+.http-request
+include::{snippets}/post-book/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/post-book/path-parameters.adoc[]
+
+.http-response
+include::{snippets}/post-book/http-response.adoc[]
+
+=== 도서 조회
+.http-request
+include::{snippets}/get-book/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/get-book/path-parameters.adoc[]
+
+.http-response
+include::{snippets}/get-book/http-response.adoc[]
+
+.response-fields
+include::{snippets}/get-book/response-fields.adoc[]
+
+=== 도서 목록 조회
+.http-request
+include::{snippets}/get-books/http-request.adoc[]
+
+.request-parameters
+include::{snippets}/get-books/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/get-books/http-response.adoc[]
+
+.response-fields
+include::{snippets}/get-books/response-fields.adoc[]
+
+== 대출
+=== 도서 대출
+
+.http-request
+include::{snippets}/post-loan/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/post-loan/path-parameters.adoc[]
+
+.request-fields
+include::{snippets}/post-loan/request-fields.adoc[]
+
+.http-response
+include::{snippets}/post-loan/http-response.adoc[]
+
+.response-headers
+include::{snippets}/post-loan/response-headers.adoc[]
+
+=== 도서 반납
+
+.http-request
+include::{snippets}/post-return-book/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/post-return-book/path-parameters.adoc[]
+
+.request-fields
+include::{snippets}/post-return-book/request-fields.adoc[]
+
+.http-response
+include::{snippets}/post-return-book/http-response.adoc[]
+
+=== 대출 기록 조회
+
+.http-request
+include::{snippets}/get-loan/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/get-loan/path-parameters.adoc[]
+
+.http-response
+include::{snippets}/get-loan/http-response.adoc[]
+
+.response-fields
+include::{snippets}/get-loan/response-fields.adoc[]
+
+=== 월별 대출 기록 조회
+.http-request
+include::{snippets}/get-loans-by-month/http-request.adoc[]
+
+.path-parameters
+include::{snippets}/get-loans-by-month/path-parameters.adoc[]
+
+.request-parameters
+include::{snippets}/get-loans-by-month/request-parameters.adoc[]
+
+.http-response
+include::{snippets}/get-loans-by-month/http-response.adoc[]
+
+.response-fields
+include::{snippets}/get-loans-by-month/response-fields.adoc[]

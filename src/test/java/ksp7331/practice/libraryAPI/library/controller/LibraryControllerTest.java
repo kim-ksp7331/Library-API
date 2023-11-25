@@ -9,10 +9,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.headers.HeaderDocumentation;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.operation.preprocess.Preprocessors;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -22,11 +30,16 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(LibraryController.class)
 @MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureRestDocs
 class LibraryControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -53,7 +66,17 @@ class LibraryControllerTest {
         // then
         actions
                 .andExpect(status().isCreated())
-                .andExpect(header().string("location", UriCreator.createUri(url, id).toString()));
+                .andExpect(header().string("location", UriCreator.createUri(url, id).toString()))
+                .andDo(document(
+                        "post-library",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("도서관 이름")
+                        ), responseHeaders(
+                                headerWithName(HttpHeaders.LOCATION).description("도서관 리소스의 엔드포인트: /libraries/{library-id}")
+                        )
+                ));
     }
     @Test
     void getLibraries() throws Exception {
@@ -64,6 +87,8 @@ class LibraryControllerTest {
                 .id(i)
                 .name(libName + i)
                 .build()).collect(Collectors.toList());
+
+        BDDMockito.given(libraryService.findLibraries()).willReturn(List.of());
         BDDMockito.given(libraryMapper.ServiceDTOsToControllerDTOs(Mockito.anyList())).willReturn(libraries);
         String url = "/libraries";
 
@@ -75,7 +100,16 @@ class LibraryControllerTest {
         // then
         actions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].name").value(everyItem(is(startsWith(libName)))));
+                .andExpect(jsonPath("$[*].name").value(everyItem(is(startsWith(libName)))))
+                .andDo(document(
+                        "get-libraries",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("도서관 id"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("도서관 이름")
+                        )
+                ));
 
     }
 }

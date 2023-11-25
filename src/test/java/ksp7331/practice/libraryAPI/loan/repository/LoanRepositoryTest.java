@@ -81,7 +81,7 @@ class LoanRepositoryTest {
         }).collect(Collectors.toList());
         Long libraryMemberId = 2L;
         int year = LocalDate.now().getYear();
-        int month = LocalDate.now().getMonthValue() - 1;
+        int month = LocalDate.now().getMonthValue();
 
         // when
         List<Loan> result = loanRepository.findByLibraryMemberIdAndMonth(libraryMemberId, year, month);
