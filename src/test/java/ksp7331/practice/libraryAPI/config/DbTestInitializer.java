@@ -3,13 +3,14 @@ package ksp7331.practice.libraryAPI.config;
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.loan.entity.Loan;
+import ksp7331.practice.libraryAPI.loan.domain.Loan;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -51,10 +52,13 @@ public class DbTestInitializer {
             TestEntity.newLibraryMember(2L, 2L, "010-0000-1111")
     );
     private List<Loan> loans = List.of(
-            Loan.builder().libraryMember(libraryMembers.get(1)).libraryBooks(List.of(
-                    libraryBooks.get(1),
-                    libraryBooks.get(3)
-            )).build(),
+            Loan.from(
+                    libraryMembers.get(1),
+                    List.of(
+                            libraryBooks.get(1),
+                            libraryBooks.get(3)
+                    )
+            ),
             TestEntity.oneBookReturnedLoan(libraryMembers.get(1), List.of(libraryBooks.get(5), libraryBooks.get(7)))
     );
 
@@ -69,7 +73,7 @@ public class DbTestInitializer {
         testRepository.saveLibraryBooks(libraryBooks);
         testRepository.saveMembers(members);
         testRepository.saveLibraryMembers(libraryMembers);
-        testRepository.saveLoans(loans);
+        loans = testRepository.saveLoans(loans);
     }
 
     public List<Book> getBooks() {
@@ -92,8 +96,9 @@ public class DbTestInitializer {
         return libraryMembers;
     }
 
-    public List<Loan> getLoans() {
-        return loans;
+    public List<ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan> getLoans() {
+        return loans.stream()
+                .map(ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan::from).collect(Collectors.toList());
     }
 
 
@@ -112,7 +117,7 @@ public class DbTestInitializer {
         }
 
         public static Loan oneBookReturnedLoan(LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
-            Loan loan = Loan.builder().libraryMember(libraryMember).libraryBooks(libraryBooks).build();
+            Loan loan = Loan.from(libraryMember, libraryBooks);
             loan.getLoanBooks().get(0).returnBook();
             return loan;
         }

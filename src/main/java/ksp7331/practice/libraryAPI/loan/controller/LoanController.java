@@ -1,8 +1,9 @@
 package ksp7331.practice.libraryAPI.loan.controller;
 
+import ksp7331.practice.libraryAPI.loan.domain.Loan;
 import ksp7331.practice.libraryAPI.loan.dto.LoanControllerDTO;
 import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
-import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
+import ksp7331.practice.libraryAPI.loan.dto.Response;
 import ksp7331.practice.libraryAPI.loan.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +12,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/members/{library-member-id}/loan")
 @RequiredArgsConstructor
 public class LoanController {
     private final LoanService loanService;
-    private final LoanMapper loanMapper;
 
     @PostMapping
     public ResponseEntity<Void> postLoan(@PathVariable("library-member-id") Long libraryMemberId,
@@ -36,23 +37,23 @@ public class LoanController {
         return ResponseEntity.created(uri).build();
     }
     @PostMapping("/{loan-id}")
-    public ResponseEntity<LoanControllerDTO.Response> postReturnBook(@PathVariable("loan-id") Long loanId,
-            @RequestBody LoanControllerDTO.ReturnPost dto){
+    public ResponseEntity<Response> postReturnBook(@PathVariable("loan-id") Long loanId,
+                                                   @RequestBody LoanControllerDTO.ReturnPost dto){
         LoanServiceDTO.ReturnBookParam param = LoanServiceDTO.ReturnBookParam.builder().loanId(loanId).bookIds(dto.getBookIds()).build();
-        LoanServiceDTO.Result result = loanService.returnBook(param);
-        return ResponseEntity.ok(loanMapper.serviceDTOToControllerDTO(result));
+        Loan loan = loanService.returnBook(param);
+        return ResponseEntity.ok(Response.from(loan));
     }
 
 
     @GetMapping("/{loan-id}")
-    public ResponseEntity<LoanControllerDTO.Response> getLoan(@PathVariable("loan-id") Long loanId) {
-        LoanServiceDTO.Result result = loanService.findLoan(loanId);
-        return ResponseEntity.ok(loanMapper.serviceDTOToControllerDTO(result));
+    public ResponseEntity<Response> getLoan(@PathVariable("loan-id") Long loanId) {
+        Loan loan = loanService.getById(loanId);
+        return ResponseEntity.ok(Response.from(loan));
     }
 
     @GetMapping
-    public ResponseEntity<List<LoanControllerDTO.Response>> getLoanByMonth(@PathVariable("library-member-id") Long libraryMemberId, @RequestParam int year, @RequestParam int month) {
-        List<LoanServiceDTO.Result> results = loanService.findLoanByMonth(libraryMemberId, year, month);
-        return ResponseEntity.ok(loanMapper.serviceDTOsToControllerDTOs(results));
+    public ResponseEntity<List<Response>> getLoanByMonth(@PathVariable("library-member-id") Long libraryMemberId, @RequestParam int year, @RequestParam int month) {
+        List<Loan> loans = loanService.findByLibraryMemberIdAndMonth(libraryMemberId, year, month);
+        return ResponseEntity.ok(loans.stream().map(Response::from).collect(Collectors.toList()));
     }
 }

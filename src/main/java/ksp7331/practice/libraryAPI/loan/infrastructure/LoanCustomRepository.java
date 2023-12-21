@@ -1,6 +1,6 @@
-package ksp7331.practice.libraryAPI.loan.repository;
+package ksp7331.practice.libraryAPI.loan.infrastructure;
 
-import ksp7331.practice.libraryAPI.loan.entity.Loan;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
 
 import java.util.List;
 import java.util.Optional;

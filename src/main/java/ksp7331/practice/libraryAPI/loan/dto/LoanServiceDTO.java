@@ -24,27 +24,4 @@ public class LoanServiceDTO {
         private List<Long> bookIds;
 
     }
-
-    @Getter
-    @AllArgsConstructor
-    @Builder
-    public static class Result {
-        private Long id;
-        private Long libraryMemberId;
-        private String memberName;
-        private String libraryName;
-        private LocalDateTime createdDate;
-        private List<Book> books;
-        @Getter
-        @AllArgsConstructor
-        @Builder
-        public static class Book {
-            private Long id;
-            private LocalDateTime returnDate;
-            private String name;
-            private String author;
-            private String publisher;
-            private String state;
-        }
-    }
 }

@@ -1,11 +1,17 @@
 package ksp7331.practice.libraryAPI.loan.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.loan.domain.Loan;
+import ksp7331.practice.libraryAPI.loan.domain.LoanBook;
+import ksp7331.practice.libraryAPI.loan.domain.LoanState;
 import ksp7331.practice.libraryAPI.loan.dto.LoanControllerDTO;
 import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
-import ksp7331.practice.libraryAPI.loan.entity.LoanBook;
-import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
 import ksp7331.practice.libraryAPI.loan.service.LoanService;
+import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.entity.Member;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
@@ -16,13 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.headers.HeaderDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
-import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -50,8 +50,6 @@ class LoanControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private LoanService loanService;
-    @MockBean
-    private LoanMapper loanMapper;
     @Autowired
     private ObjectMapper objectMapper;
     @Test
@@ -108,30 +106,36 @@ class LoanControllerTest {
         LocalDateTime returnDate = LocalDateTime.now();
         String author = "author1";
         String publisher = "publisher1";
-        LoanControllerDTO.Response.Book book = LoanControllerDTO.Response.Book.builder()
-                .id(bookId)
-                .name(bookName)
-                .returnDate(returnDate)
-                .author(author)
-                .publisher(publisher)
-                .state(LoanBook.State.LOANED.name())
-                .build();
 
         LoanControllerDTO.ReturnPost returnPost = LoanControllerDTO.ReturnPost.builder().bookIds(bookIds).build();
-        LoanServiceDTO.Result result = LoanServiceDTO.Result.builder().build();
-        LoanControllerDTO.Response response = LoanControllerDTO.Response.builder()
+
+        LoanBook loanBook = LoanBook.builder()
+                .libraryBook(LibraryBook.builder().book(Book.builder()
+                                .id(bookId)
+                                .name(bookName)
+                                .author(author)
+                                .publisher(publisher)
+                                .build())
+                        .build())
+                .returnDate(returnDate)
+                .state(LoanState.LOANED)
+                .build();
+
+
+        Loan loan = Loan.builder()
                 .id(loanId)
-                .libraryMemberId(libraryMemberId)
-                .memberName(memberName)
-                .libraryName(libraryName)
+                .libraryMember(LibraryMember.builder()
+                        .id(libraryMemberId)
+                        .member(Member.builder().name(memberName).build())
+                        .library(Library.builder().name(libraryName).build())
+                        .build())
                 .createdDate(createdDate)
-                .books(List.of(book))
+                .loanBooks(List.of(loanBook))
                 .build();
 
 
         String content = objectMapper.writeValueAsString(returnPost);
-        BDDMockito.given(loanService.returnBook(Mockito.any(LoanServiceDTO.ReturnBookParam.class))).willReturn(result);
-        BDDMockito.given(loanMapper.serviceDTOToControllerDTO(result)).willReturn(response);
+        BDDMockito.given(loanService.returnBook(Mockito.any(LoanServiceDTO.ReturnBookParam.class))).willReturn(loan);
 
         String urlTemplates = "/members/{library-member-id}/loan/{loan-id}";
 
@@ -190,25 +194,35 @@ class LoanControllerTest {
         String author = "author";
         String publisher = "publisher";
         LocalDateTime returnDate = LocalDateTime.now();
-        String bookState = LoanBook.State.LOANED.name();
-        List<LoanControllerDTO.Response.Book> books = LongStream.rangeClosed(1, repeat).mapToObj(i -> LoanControllerDTO.Response.Book.builder()
-                .id(i).name(bookName + i).state(bookState).author(author + i).publisher(publisher + i).returnDate(returnDate).build()).collect(Collectors.toList());
+        LoanState bookState = LoanState.LOANED;
 
-        LoanServiceDTO.Result result = LoanServiceDTO.Result.builder().build();
-        LoanControllerDTO.Response response = LoanControllerDTO.Response.builder()
+
+        List<LoanBook> loanBooks = LongStream.rangeClosed(1, repeat).mapToObj(i -> LoanBook.builder()
+                .libraryBook(LibraryBook.builder().book(Book.builder()
+                                .id(i)
+                                .name(bookName + i)
+                                .author(author + i)
+                                .publisher(publisher + i)
+                                .build())
+                        .build())
+                .returnDate(returnDate)
+                .state(bookState)
+                .build()).collect(Collectors.toList());
+
+
+        Loan loan = Loan.builder()
                 .id(loanId)
-                .libraryMemberId(libraryMemberId)
-                .memberName(memberName)
-                .libraryName(libraryName)
+                .libraryMember(LibraryMember.builder()
+                        .id(libraryMemberId)
+                        .member(Member.builder().name(memberName).build())
+                        .library(Library.builder().name(libraryName).build())
+                        .build())
                 .createdDate(createdDate)
-                .books(books)
+                .loanBooks(loanBooks)
                 .build();
 
-        BDDMockito.given(loanService.findLoan(Mockito.anyLong())).willReturn(result);
-        BDDMockito.given(loanMapper.serviceDTOToControllerDTO(result)).willReturn(response);
-
+        BDDMockito.given(loanService.getById(Mockito.anyLong())).willReturn(loan);
         String urlTemplates = "/members/{library-member-id}/loan/{loan-id}";
-
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -227,7 +241,7 @@ class LoanControllerTest {
                 .andExpect(jsonPath("$.books[*].name").value(everyItem(is(startsWith(bookName)))))
                 .andExpect(jsonPath("$.books[*].author").value(everyItem(is(startsWith(author)))))
                 .andExpect(jsonPath("$.books[*].publisher").value(everyItem(is(startsWith(publisher)))))
-                .andExpect(jsonPath("$.books[*].state").value(everyItem(is(bookState))))
+                .andExpect(jsonPath("$.books[*].state").value(everyItem(is(bookState.name()))))
                 .andDo(document(
                         "get-loan",
                         preprocessRequest(prettyPrint()),
@@ -268,23 +282,34 @@ class LoanControllerTest {
         String author = "author";
         String publisher = "publisher";
         LocalDateTime returnDate = LocalDateTime.now();
-        String bookState = LoanBook.State.LOANED.name();
-        List<LoanControllerDTO.Response.Book> books = LongStream.rangeClosed(1, repeat).mapToObj(i -> LoanControllerDTO.Response.Book.builder()
-                .id(i).name(bookName + i).state(bookState).author(author + i).publisher(publisher + i).returnDate(returnDate).build()).collect(Collectors.toList());
+        LoanState bookState = LoanState.LOANED;
 
-        List<LoanServiceDTO.Result> results = List.of(LoanServiceDTO.Result.builder().build());
-        List<LoanControllerDTO.Response> responses = List.of(LoanControllerDTO.Response.builder()
+        List<LoanBook> loanBooks = LongStream.rangeClosed(1, repeat).mapToObj(i -> LoanBook.builder()
+                .libraryBook(LibraryBook.builder().book(Book.builder()
+                                .id(i)
+                                .name(bookName + i)
+                                .author(author + i)
+                                .publisher(publisher + i)
+                                .build())
+                        .build())
+                .returnDate(returnDate)
+                .state(bookState)
+                .build()).collect(Collectors.toList());
+
+
+        Loan loan = Loan.builder()
                 .id(loanId)
-                .libraryMemberId(libraryMemberId)
-                .memberName(memberName)
-                .libraryName(libraryName)
+                .libraryMember(LibraryMember.builder()
+                        .id(libraryMemberId)
+                        .member(Member.builder().name(memberName).build())
+                        .library(Library.builder().name(libraryName).build())
+                        .build())
                 .createdDate(createdDate)
-                .books(books)
-                .build());
+                .loanBooks(loanBooks)
+                .build();
 
 
-        BDDMockito.given(loanService.findLoanByMonth(Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt())).willReturn(results);
-        BDDMockito.given(loanMapper.serviceDTOsToControllerDTOs(results)).willReturn(responses);
+        BDDMockito.given(loanService.findByLibraryMemberIdAndMonth(Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt())).willReturn(List.of(loan));
 
         String urlTemplates = "/members/{library-member-id}/loan";
 

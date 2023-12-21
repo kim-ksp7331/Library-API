@@ -1,13 +1,12 @@
-package ksp7331.practice.libraryAPI.loan.repository;
+package ksp7331.practice.libraryAPI.loan.infrastructure;
 
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.config.DbTestConfig;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.loan.entity.Loan;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,13 +18,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(DbTestConfig.class)
-class LoanRepositoryTest {
+class LoanJpaRepositoryTest {
     @Autowired
-    private LoanRepository loanRepository;
+    private LoanJpaRepository loanJpaRepository;
     @Autowired
     private DbTestInitializer dbTestInitializer;
 
@@ -38,7 +36,7 @@ class LoanRepositoryTest {
         List<Book> books = dbTestInitializer.getBooks();
 
         // when
-        Optional<Loan> optionalLoan = loanRepository.findByIdFetchJoin(id);
+        Optional<Loan> optionalLoan = loanJpaRepository.findByIdFetchJoin(id);
 
         // then
         assertThat(optionalLoan.isPresent()).isTrue();
@@ -65,7 +63,7 @@ class LoanRepositoryTest {
         Long libraryMemberId = 2L;
 
         // when
-        List<Loan> result = loanRepository.findAllNotReturned(libraryMemberId);
+        List<Loan> result = loanJpaRepository.findAllNotReturned(libraryMemberId);
 
         // then
         assertThat(result).hasSize(loanSize);
@@ -84,7 +82,7 @@ class LoanRepositoryTest {
         int month = LocalDate.now().getMonthValue();
 
         // when
-        List<Loan> result = loanRepository.findByLibraryMemberIdAndMonth(libraryMemberId, year, month);
+        List<Loan> result = loanJpaRepository.findByLibraryMemberIdAndMonth(libraryMemberId, year, month);
 
         // then
         assertThat(result).hasSize(loans.size());

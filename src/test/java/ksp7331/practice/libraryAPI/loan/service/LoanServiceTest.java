@@ -3,14 +3,14 @@ package ksp7331.practice.libraryAPI.loan.service;
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.book.service.LibraryBookService;
-import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.loan.domain.Loan;
+import ksp7331.practice.libraryAPI.loan.domain.LoanBook;
+import ksp7331.practice.libraryAPI.loan.domain.LoanState;
 import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
-import ksp7331.practice.libraryAPI.loan.entity.Loan;
-import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
-import ksp7331.practice.libraryAPI.loan.repository.LoanRepository;
+import ksp7331.practice.libraryAPI.loan.service.port.LoanRepository;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
 import org.junit.jupiter.api.DisplayName;
@@ -22,12 +22,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -43,8 +43,6 @@ class LoanServiceTest {
     private LibraryMemberService libraryMemberService;
     @Mock
     private LibraryBookService libraryBookService;
-    @Mock
-    private LoanMapper loanMapper;
 
     @Test
     @DisplayName("Loan 엔티티 생성")
@@ -59,12 +57,13 @@ class LoanServiceTest {
                 .libraryMemberId(libraryMemberId).bookIds(bookIds).build();
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
         List<LibraryBook> libraryBooks = List.of(LibraryBook.builder().build());
-        Loan loan = Loan.builder().id(loanId).libraryMember(libraryMember).libraryBooks(libraryBooks).build();
+
+        Loan loan = Loan.builder().id(loanId).build();
 
         BDDMockito.given(libraryMemberService.findVerifiedLibraryMember(libraryMemberId)).willReturn(libraryMember);
         BDDMockito.given(loanRepository.findAllNotReturned(Mockito.anyLong())).willReturn(List.of());
         BDDMockito.given(libraryBookService.findExistBookInLibrary(libraryId, bookIds)).willReturn(libraryBooks);
-        BDDMockito.given(loanRepository.save(Mockito.any(Loan.class))).willReturn(loan);
+        BDDMockito.given(loanRepository.create(Mockito.any(Loan.class))).willReturn(loan);
 
         // when
         Long result = loanService.createLoan(param);
@@ -102,7 +101,7 @@ class LoanServiceTest {
 
     @Test
     @DisplayName("연체중인 상황에서 Loan 엔티티를 생성하는 경우")
-    void createLoanWhenOverbooked() throws NoSuchFieldException, IllegalAccessException {
+    void createLoanWhenOverbooked() {
         // given
         long libraryMemberId = 1L;
         long libraryId = 1L;
@@ -110,16 +109,12 @@ class LoanServiceTest {
         LoanServiceDTO.CreateParam param = LoanServiceDTO.CreateParam.builder()
                 .libraryMemberId(libraryMemberId).build();
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
-        Loan loan = Loan.builder().build();
 
-        Field field = BaseTimeEntity.class.getDeclaredField("createdDate");
-        field.setAccessible(true);
-        field.set(loan, LocalDateTime.now().minusDays(20));
-        List<Loan> loans = List.of(loan);
+        Loan loan = Loan.builder().createdDate(LocalDateTime.now().minusDays(20)).build();
 
 
         BDDMockito.given(libraryMemberService.findVerifiedLibraryMember(libraryMemberId)).willReturn(libraryMember);
-        BDDMockito.given(loanRepository.findAllNotReturned(Mockito.anyLong())).willReturn(loans);
+        BDDMockito.given(loanRepository.findAllNotReturned(Mockito.anyLong())).willReturn(List.of(loan));
 
 
         // when // then
@@ -147,30 +142,37 @@ class LoanServiceTest {
 
     @Test
     @DisplayName("Loan 엔티티에 있는 도서중 일부를 반납")
-    void returnBook() throws NoSuchFieldException, IllegalAccessException {
+    void returnBook(){
         // given
         Long loanId = 1L;
         long bookId = 1L;
         List<Long> bookIds = List.of(bookId);
-        List<LibraryBook> libraryBooks = List.of(LibraryBook.builder().book(Book.builder().id(bookId).build()).build());
-        LibraryMember libraryMember = LibraryMember.builder().build();
 
         LoanServiceDTO.ReturnBookParam param = LoanServiceDTO.ReturnBookParam.builder().loanId(loanId).bookIds(bookIds).build();
-        Loan loan = Loan.builder().id(loanId).libraryMember(libraryMember).libraryBooks(libraryBooks).build();
-        LoanServiceDTO.Result resultDTO = LoanServiceDTO.Result.builder().build();
 
-        Field field = BaseTimeEntity.class.getDeclaredField("createdDate");
-        field.setAccessible(true);
-        field.set(loan, LocalDateTime.now());
+        LoanBook loanBook = LoanBook.builder()
+                .libraryBook(LibraryBook.builder().book(Book.builder()
+                                .id(bookId)
+                                .build())
+                        .build())
+                .state(LoanState.LOANED)
+                .build();
 
-        BDDMockito.given(loanRepository.findByIdFetchJoin(Mockito.anyLong())).willReturn(Optional.of(loan));
-        BDDMockito.given(loanMapper.entityToServiceDTO(loan)).willReturn(resultDTO);
+        Loan loan = Loan.builder()
+                .id(loanId)
+                .libraryMember(LibraryMember.builder()
+                        .build())
+                .loanBooks(List.of(loanBook))
+                .createdDate(LocalDateTime.now())
+                .build();
+
+        BDDMockito.given(loanRepository.update(Mockito.anyLong(), Mockito.any(Function.class))).willReturn(loan);
 
         // when
-        LoanServiceDTO.Result result = loanService.returnBook(param);
+        Loan result = loanService.returnBook(param);
 
         // then
-        assertThat(result).isEqualTo(resultDTO);
+        assertThat(result).isEqualTo(loan);
     }
 
     @Test
@@ -178,15 +180,28 @@ class LoanServiceTest {
     void findLoan() {
         // given
         Long loanId = 1L;
-        Loan loan = Loan.builder().build();
-        LoanServiceDTO.Result loanDTO = LoanServiceDTO.Result.builder().build();
-        BDDMockito.given(loanRepository.findByIdFetchJoin(Mockito.anyLong())).willReturn(Optional.of(loan));
-        BDDMockito.given(loanMapper.entityToServiceDTO(loan)).willReturn(loanDTO);
+        LoanBook loanBook = LoanBook.builder()
+                .libraryBook(LibraryBook.builder().book(Book.builder()
+                                .build())
+                        .build())
+                .state(LoanState.LOANED)
+                .build();
+
+        Loan loan = Loan.builder()
+                .id(loanId)
+                .libraryMember(LibraryMember.builder()
+                        .build())
+                .loanBooks(List.of(loanBook))
+                .createdDate(LocalDateTime.now())
+                .build();
+
+        BDDMockito.given(loanRepository.findById(Mockito.anyLong())).willReturn(Optional.of(loan));
+
 
         // when
-        LoanServiceDTO.Result result = loanService.findLoan(loanId);
+        Loan result = loanService.getById(loanId);
 
         // then
-        assertThat(result).isEqualTo(loanDTO);
+        assertThat(result).isEqualTo(loan);
     }
 }

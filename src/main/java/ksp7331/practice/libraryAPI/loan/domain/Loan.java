@@ -1,38 +1,35 @@
-package ksp7331.practice.libraryAPI.loan.entity;
+package ksp7331.practice.libraryAPI.loan.domain;
 
 import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
-import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
-import lombok.*;
 
-import javax.persistence.*;
+import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import lombok.Builder;
+import lombok.Getter;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Loan extends BaseTimeEntity {
+public class Loan {
     private static final int MAX_LOANABLE_BOOKS = 5;
     private static final int MAX_LOANABLE_DAYS = 14;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "LIBRARY_MEMBER_ID")
     private LibraryMember libraryMember;
-    @OneToMany(mappedBy = "loan", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<LoanBook> loanBooks = new ArrayList<>();
+    private LocalDateTime createdDate;
 
     @Builder
-    public Loan(Long id, LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
+    public Loan(Long id, LibraryMember libraryMember, List<LoanBook> loanBooks, LocalDateTime createdDate) {
         this.id = id;
         this.libraryMember = libraryMember;
-        addBooks(libraryBooks);
+        this.createdDate = createdDate;
+        if(loanBooks != null) this.loanBooks = loanBooks;
+//        addBooks(libraryBooks);
     }
 
     public void addBooks(List<LibraryBook> libraryBooks) {
@@ -43,7 +40,6 @@ public class Loan extends BaseTimeEntity {
         libraryBooks.forEach(book -> {
             loanBooks.add(LoanBook.builder()
                     .libraryBook(book)
-                    .loan(this)
                     .build());
             book.setState(LibraryBook.State.NOT_LOANABLE);
         });
@@ -72,4 +68,10 @@ public class Loan extends BaseTimeEntity {
         if(days > MAX_LOANABLE_DAYS) throw new BusinessLogicException(ExceptionCode.LOAN_RESTRICTED);
     }
 
+    public static Loan from(LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
+        Loan loan = Loan.builder().build();
+        loan.libraryMember = libraryMember;
+        loan.addBooks(libraryBooks);
+        return loan;
+    }
 }

@@ -1,12 +1,11 @@
 package ksp7331.practice.libraryAPI.loan.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.IntegrationTest;
 import ksp7331.practice.libraryAPI.book.entity.Book;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
+import ksp7331.practice.libraryAPI.loan.domain.LoanState;
 import ksp7331.practice.libraryAPI.loan.dto.LoanControllerDTO;
-import ksp7331.practice.libraryAPI.loan.entity.LoanBook;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +129,8 @@ public class LoanIntegrationTest extends IntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(loanId))
                 .andExpect(jsonPath("$.libraryMemberId").value(libraryMemberId))
-                .andExpect(jsonPath("$.books[0].state").value(LoanBook.State.RETURN.name()))
-                .andExpect(jsonPath("$.books[1].state").value(LoanBook.State.LOANED.name()));
+                .andExpect(jsonPath("$.books[0].state").value(LoanState.RETURN.name()))
+                .andExpect(jsonPath("$.books[1].state").value(LoanState.LOANED.name()));
 
     }
 
@@ -170,7 +169,7 @@ public class LoanIntegrationTest extends IntegrationTest {
                 .andExpect(jsonPath("$.books[1].name").value(book2.getName()))
                 .andExpect(jsonPath("$.books[1].author").value(book2.getAuthor()))
                 .andExpect(jsonPath("$.books[1].publisher").value(book2.getPublisher()))
-                .andExpect(jsonPath("$.books[*].state").value(everyItem(is(LoanBook.State.LOANED.name()))));
+                .andExpect(jsonPath("$.books[*].state").value(everyItem(is(LoanState.LOANED.name()))));
 
     }
 }

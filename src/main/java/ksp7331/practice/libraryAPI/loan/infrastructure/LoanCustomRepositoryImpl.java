@@ -1,9 +1,9 @@
-package ksp7331.practice.libraryAPI.loan.repository;
+package ksp7331.practice.libraryAPI.loan.infrastructure;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ksp7331.practice.libraryAPI.loan.entity.Loan;
-import ksp7331.practice.libraryAPI.loan.entity.LoanBook;
+import ksp7331.practice.libraryAPI.loan.domain.LoanState;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +13,8 @@ import java.util.Optional;
 import static ksp7331.practice.libraryAPI.book.entity.QBook.*;
 import static ksp7331.practice.libraryAPI.book.entity.QLibraryBook.*;
 import static ksp7331.practice.libraryAPI.library.entity.QLibrary.*;
-import static ksp7331.practice.libraryAPI.loan.entity.QLoan.*;
-import static ksp7331.practice.libraryAPI.loan.entity.QLoanBook.*;
+import static ksp7331.practice.libraryAPI.loan.infrastructure.entity.QLoan.*;
+import static ksp7331.practice.libraryAPI.loan.infrastructure.entity.QLoanBook.*;
 import static ksp7331.practice.libraryAPI.member.entity.QLibraryMember.*;
 import static ksp7331.practice.libraryAPI.member.entity.QMember.*;
 
@@ -35,7 +35,7 @@ public class LoanCustomRepositoryImpl implements LoanCustomRepository{
     public List<Loan> findAllNotReturned(Long libraryMemberId) {
         List<Loan> loans = joinForBook(jpaQueryFactory.selectFrom(loan)
                 .where(libraryMember.id.eq(libraryMemberId))
-                .where(loanBook.state.eq(LoanBook.State.LOANED)))
+                .where(loanBook.state.eq(LoanState.LOANED)))
                 .distinct().fetch();
         return loans;
     }

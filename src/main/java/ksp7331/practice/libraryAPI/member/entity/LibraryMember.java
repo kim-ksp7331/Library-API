@@ -4,12 +4,11 @@ import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.loan.entity.Loan;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

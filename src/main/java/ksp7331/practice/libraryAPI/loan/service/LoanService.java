@@ -4,10 +4,9 @@ import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.book.service.LibraryBookService;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
+import ksp7331.practice.libraryAPI.loan.domain.Loan;
 import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
-import ksp7331.practice.libraryAPI.loan.entity.Loan;
-import ksp7331.practice.libraryAPI.loan.mapper.LoanMapper;
-import ksp7331.practice.libraryAPI.loan.repository.LoanRepository;
+import ksp7331.practice.libraryAPI.loan.service.port.LoanRepository;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final LibraryMemberService libraryMemberService;
     private final LibraryBookService libraryBookService;
-    private final LoanMapper loanMapper;
     public Long createLoan(LoanServiceDTO.CreateParam param) {
         LibraryMember libraryMember = libraryMemberService.findVerifiedLibraryMember(param.getLibraryMemberId());
         checkLoanable(libraryMember);
@@ -35,31 +33,32 @@ public class LoanService {
         if(param.getBookIds().size() != libraryBooks.size()) throw new BusinessLogicException(ExceptionCode.BOOK_NOT_FOUND);
 
         // 정상 흐름
-        Loan loan = Loan.builder()
-                .libraryMember(libraryMember)
-                .libraryBooks(libraryBooks)
-                .build();
 
-        return loanRepository.save(loan).getId();
+
+        return loanRepository.create(Loan.from(libraryMember, libraryBooks)).getId();
     }
 
-    public LoanServiceDTO.Result returnBook(LoanServiceDTO.ReturnBookParam param) {
-        Loan loan = findVerifiedLoan(param.getLoanId());
-        loan.returnBooks(param.getBookIds());
-        return loanMapper.entityToServiceDTO(loan);
+    public Loan returnBook(LoanServiceDTO.ReturnBookParam param) {
+
+        return loanRepository.update(param.getLoanId(), optionalLoan -> {
+            if(optionalLoan.isEmpty()) throw new BusinessLogicException(ExceptionCode.LOAN_NOT_FOUND);
+            Loan loan = optionalLoan.get();
+            loan.returnBooks(param.getBookIds());
+            return loan;
+        });
     }
 
-    public LoanServiceDTO.Result findLoan(Long loanId) {
-        return loanMapper.entityToServiceDTO(findVerifiedLoan(loanId));
+    public Loan getById(Long loanId) {
+        return getByIdInternal(loanId);
     }
 
-    public List<LoanServiceDTO.Result> findLoanByMonth(Long libraryMemberId, int year, int month) {
+    public List<Loan> findByLibraryMemberIdAndMonth(Long libraryMemberId, int year, int month) {
         List<Loan> loans = loanRepository.findByLibraryMemberIdAndMonth(libraryMemberId, year, month);
-        return loanMapper.entitiesToServiceDTO(loans);
+        return loans;
     }
 
-    private Loan findVerifiedLoan(Long loanId) {
-        Optional<Loan> optionalLoan = loanRepository.findByIdFetchJoin(loanId);
+    private Loan getByIdInternal(Long loanId) {
+        Optional<Loan> optionalLoan = loanRepository.findById(loanId);
         return optionalLoan.orElseThrow(() -> new BusinessLogicException(ExceptionCode.LOAN_NOT_FOUND));
     }
 

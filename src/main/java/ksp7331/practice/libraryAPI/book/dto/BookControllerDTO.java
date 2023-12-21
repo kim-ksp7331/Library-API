@@ -4,12 +4,14 @@ import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 public class BookControllerDTO {
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     public static class Post {
         private String name;
