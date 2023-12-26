@@ -1,9 +1,8 @@
-package ksp7331.practice.libraryAPI.book.repository;
+package ksp7331.practice.libraryAPI.book.infrastructure;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import lombok.RequiredArgsConstructor;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

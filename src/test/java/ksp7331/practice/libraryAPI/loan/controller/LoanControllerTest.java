@@ -1,14 +1,14 @@
 package ksp7331.practice.libraryAPI.loan.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.loan.domain.Loan;
 import ksp7331.practice.libraryAPI.loan.domain.LoanBook;
 import ksp7331.practice.libraryAPI.loan.domain.LoanState;
-import ksp7331.practice.libraryAPI.loan.dto.LoanControllerDTO;
-import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
+import ksp7331.practice.libraryAPI.loan.dto.CreateLoan;
+import ksp7331.practice.libraryAPI.loan.dto.ReturnBook;
 import ksp7331.practice.libraryAPI.loan.service.LoanService;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
@@ -56,12 +56,12 @@ class LoanControllerTest {
     void postLoan() throws Exception {
         // given
         List<Long> bookIds = List.of(1L, 2L);
-        LoanControllerDTO.Post post = LoanControllerDTO.Post.builder().bookIds(bookIds).build();
+        CreateLoan createLoan = CreateLoan.builder().bookIds(bookIds).build();
         Long libraryMemberId = 1L;
         Long loanId = 1L;
 
-        String content = objectMapper.writeValueAsString(post);
-        BDDMockito.given(loanService.createLoan(Mockito.any(LoanServiceDTO.CreateParam.class))).willReturn(loanId);
+        String content = objectMapper.writeValueAsString(createLoan);
+        BDDMockito.given(loanService.createLoan(Mockito.any(CreateLoan.class))).willReturn(loanId);
         String urlTemplates = "/members/{library-member-id}/loan";
 
         // when
@@ -107,7 +107,7 @@ class LoanControllerTest {
         String author = "author1";
         String publisher = "publisher1";
 
-        LoanControllerDTO.ReturnPost returnPost = LoanControllerDTO.ReturnPost.builder().bookIds(bookIds).build();
+        ReturnBook returnPost = ReturnBook.builder().bookIds(bookIds).build();
 
         LoanBook loanBook = LoanBook.builder()
                 .libraryBook(LibraryBook.builder().book(Book.builder()
@@ -135,7 +135,7 @@ class LoanControllerTest {
 
 
         String content = objectMapper.writeValueAsString(returnPost);
-        BDDMockito.given(loanService.returnBook(Mockito.any(LoanServiceDTO.ReturnBookParam.class))).willReturn(loan);
+        BDDMockito.given(loanService.returnBook(Mockito.any(ReturnBook.class))).willReturn(loan);
 
         String urlTemplates = "/members/{library-member-id}/loan/{loan-id}";
 

@@ -1,7 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.domain;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import org.assertj.core.api.Assertions;

@@ -1,6 +1,6 @@
 package ksp7331.practice.libraryAPI.loan.infrastructure;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
 import ksp7331.practice.libraryAPI.config.DbTestConfig;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.library.entity.Library;

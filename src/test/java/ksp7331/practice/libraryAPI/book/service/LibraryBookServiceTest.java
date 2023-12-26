@@ -1,11 +1,9 @@
 package ksp7331.practice.libraryAPI.book.service;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
-import ksp7331.practice.libraryAPI.book.repository.LibraryBookRepository;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.book.service.port.LibraryBookRepository;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +14,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class LibraryBookServiceTest {
@@ -31,8 +28,9 @@ class LibraryBookServiceTest {
     @Test
     void createLibraryBook() {
         // given
-        Book book = Book.builder().build();
+        Long bookId = 1L;
         long libraryId = 1L;
+        Book book = Book.builder().id(bookId).build();
 
         BDDMockito.given(libraryService.findVerifiedLibrary(Mockito.anyLong()))
                 .willReturn(Library.builder().id(libraryId).build());

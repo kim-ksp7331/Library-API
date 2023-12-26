@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.domain;
 
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.domain.BookState;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +21,6 @@ class LoanBookTest {
         // then
         assertThat(loanBook.getReturnDate()).isNotNull();
         assertThat(loanBook.getState()).isEqualTo(LoanState.RETURN);
-        assertThat(loanBook.getLibraryBook().getState()).isEqualTo(LibraryBook.State.LOANABLE);
+        assertThat(loanBook.getLibraryBook().getState()).isEqualTo(BookState.LOANABLE);
     }
 }

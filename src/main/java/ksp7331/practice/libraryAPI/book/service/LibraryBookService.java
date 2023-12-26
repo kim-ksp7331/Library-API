@@ -1,10 +1,8 @@
 package ksp7331.practice.libraryAPI.book.service;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
-import ksp7331.practice.libraryAPI.book.repository.LibraryBookRepository;
-import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
-import ksp7331.practice.libraryAPI.exception.ExceptionCode;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
+import ksp7331.practice.libraryAPI.book.service.port.LibraryBookRepository;
 import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +19,8 @@ public class LibraryBookService {
     private final LibraryService libraryService;
     public void createLibraryBook(Book book, Long libraryId) {
         Library library = libraryService.findVerifiedLibrary(libraryId);
-        LibraryBook libraryBook = LibraryBook.builder()
-                .book(book)
-                .library(library)
-                .build();
-        libraryBookRepository.save(libraryBook);
+        LibraryBook libraryBook = LibraryBook.builder().library(library).book(book).build();
+        libraryBookRepository.create(libraryBook);
     }
 
     public List<LibraryBook> findExistBookInLibrary(Long libraryId, List<Long> bookIds) {

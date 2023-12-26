@@ -1,6 +1,6 @@
 package ksp7331.practice.libraryAPI.library.entity;
 
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import lombok.*;

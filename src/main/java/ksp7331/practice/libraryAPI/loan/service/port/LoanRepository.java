@@ -9,7 +9,7 @@ import java.util.function.Function;
 public interface LoanRepository {
     Loan create(Loan loan);
 
-    Loan update(Long id, Function<Optional<Loan>, Loan> function);
+    Loan update(Loan loan);
 
     List<Loan> findByLibraryMemberIdAndMonth(Long libraryMemberId, int year, int month);
 

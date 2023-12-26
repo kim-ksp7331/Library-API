@@ -1,8 +1,6 @@
 package ksp7331.practice.libraryAPI.book.controller;
 
-import ksp7331.practice.libraryAPI.book.dto.BookControllerDTO;
-import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
-import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
+import ksp7331.practice.libraryAPI.book.dto.*;
 import ksp7331.practice.libraryAPI.book.service.BookService;
 import ksp7331.practice.libraryAPI.common.dto.MultiResponseDTO;
 import ksp7331.practice.libraryAPI.util.UriCreator;
@@ -17,34 +15,32 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
-    private final BookMapper bookMapper;
-
     @PostMapping("/libraries/{library-id}/books")
-    public ResponseEntity<Void> postNewBook(@PathVariable("library-id")Long libraryId, @RequestBody BookControllerDTO.Post post) {
+    public ResponseEntity<Void> postNewBook(@PathVariable("library-id")Long libraryId, @RequestBody BookCreate bookCreate) {
         String BOOK_URL_PREFIX = "/books";
-
-        Long id = bookService.createNewBook(bookMapper.controllerDTOToServiceDTO(post, libraryId));
+        bookCreate.setLibraryId(libraryId);
+        Long id = bookService.createNewBook(bookCreate);
         URI uri = UriCreator.createUri(BOOK_URL_PREFIX, id);
         return ResponseEntity.created(uri).build();
     }
 
     @PostMapping("/libraries/{library-id}/books/{book-id}")
     public ResponseEntity<Void> postBook(@PathVariable("library-id")Long libraryId, @PathVariable("book-id")Long bookId) {
-        bookService.addBookToLibrary(BookServiceDTO.AddParam.builder()
+        bookService.addBookToLibrary(LibraryBookCreate.builder()
                         .bookId(bookId)
                         .libraryId(libraryId)
                         .build());
         return ResponseEntity.ok().build();
     }
     @GetMapping("/books/{book-id}")
-    public ResponseEntity<BookControllerDTO.Response> getBook(@PathVariable("book-id")Long bookId) {
-        BookControllerDTO.Response response = bookMapper.serviceDTOToControllerDTO(bookService.findBook(bookId));
+    public ResponseEntity<Response> getBook(@PathVariable("book-id")Long bookId) {
+        Response response = Response.from(bookService.getById(bookId));
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/books")
-    public ResponseEntity<MultiResponseDTO<BookControllerDTO.Response>> getBooks(@ModelAttribute BookControllerDTO.FindPage dto) {
-        Page<BookServiceDTO.Result> books = bookService.findBooks(bookMapper.controllerDTOToServiceDTOForPage(dto));
-        return ResponseEntity.ok(bookMapper.serviceDTOsToControllerDTO(books));
+    public ResponseEntity<MultiResponseDTO<Response>> getBooks(@ModelAttribute BookPageCreate dto) {
+        Page<Response> books = bookService.findAll(dto).map(Response::from);
+        return ResponseEntity.ok(MultiResponseDTO.<Response>builder().page(books).data(books.getContent()).build());
     }
 }

@@ -1,9 +1,9 @@
 package ksp7331.practice.libraryAPI.config;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.loan.domain.Loan;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
 import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanBook;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
@@ -24,7 +24,7 @@ public interface TestRepository {
 
     void savePhones(List<Phone> phones);
 
-    List<Loan> saveLoans(List<Loan> loans);
+    void saveLoans(List<Loan> loans);
 
     void saveLoanBooks(List<LoanBook> loanBooks);
 }

@@ -1,9 +1,8 @@
 package ksp7331.practice.libraryAPI.book.service;
 
-import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
-import ksp7331.practice.libraryAPI.book.repository.BookRepository;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.book.dto.*;
+import ksp7331.practice.libraryAPI.book.service.port.BookRepository;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -22,32 +21,31 @@ import java.util.Optional;
 public class BookService {
     private final BookRepository bookRepository;
     private final LibraryBookService libraryBookService;
-    private final BookMapper bookMapper;
 
-    public Long createNewBook(BookServiceDTO.CreateParam createParam) {
-        Book book = bookMapper.serviceDTOToEntity(createParam);
-        Book savedBook = bookRepository.save(book);
-        libraryBookService.createLibraryBook(savedBook, createParam.getLibraryId());
+    public Long createNewBook(BookCreate bookCreate) {
+        Book book = bookCreate.toDomain();
+        Book savedBook = bookRepository.create(book);
+        libraryBookService.createLibraryBook(savedBook, bookCreate.getLibraryId());
         return savedBook.getId();
     }
 
-    public void addBookToLibrary(BookServiceDTO.AddParam addParam) {
-        Book book = findVerifiedBook(addParam.getBookId());
-        libraryBookService.createLibraryBook(book, addParam.getLibraryId());
+    public void addBookToLibrary(LibraryBookCreate libraryBookCreate) {
+        Book book = getByIdInternal(libraryBookCreate.getBookId());
+        libraryBookService.createLibraryBook(book, libraryBookCreate.getLibraryId());
     }
 
-    public BookServiceDTO.Result findBook(Long bookId) {
-        Book book = findVerifiedBook(bookId);
-        return bookMapper.entityToServiceDTO(book);
+    public Book getById(Long bookId) {
+        Book book = getByIdInternal(bookId);
+        return book;
     }
 
-    public Page<BookServiceDTO.Result> findBooks(BookServiceDTO.PageParam dto) {
+    public Page<Book> findAll(BookPageCreate dto) {
         Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getSize(), Sort.by("name").ascending());
-        return bookMapper.entitiesToServiceDTOs(bookRepository.findAllPagination(pageable));
+        return bookRepository.findAllPagination(pageable);
     }
 
-    private Book findVerifiedBook(Long bookId) {
-        Optional<Book> optionalBook = bookRepository.findByIdFetchJoin(bookId);
+    private Book getByIdInternal(Long bookId) {
+        Optional<Book> optionalBook = bookRepository.findById(bookId);
         return optionalBook.orElseThrow(() -> new BusinessLogicException(ExceptionCode.BOOK_NOT_FOUND));
     }
 }

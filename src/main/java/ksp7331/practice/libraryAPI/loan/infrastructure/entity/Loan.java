@@ -1,15 +1,10 @@
 package ksp7331.practice.libraryAPI.loan.infrastructure.entity;
 
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
-import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
-import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,8 +21,16 @@ public class Loan extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "LIBRARY_MEMBER_ID")
     private LibraryMember libraryMember;
-    @OneToMany(mappedBy = "loan", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "loan", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE})
     private List<LoanBook> loanBooks = new ArrayList<>();
+
+    @Builder
+    public Loan(Long id, LibraryMember libraryMember, List<LoanBook> loanBooks) {
+        this.id = id;
+        this.libraryMember = libraryMember;
+        this.loanBooks = loanBooks;
+        loanBooks.forEach(loanBook -> loanBook.setLoan(this));
+    }
 
     public static Loan from(ksp7331.practice.libraryAPI.loan.domain.Loan domain) {
         Loan loan = new Loan();
@@ -44,12 +47,12 @@ public class Loan extends BaseTimeEntity {
         });
     }
 
-    public ksp7331.practice.libraryAPI.loan.domain.Loan to() {
+    public ksp7331.practice.libraryAPI.loan.domain.Loan toDomain() {
         return ksp7331.practice.libraryAPI.loan.domain.Loan.builder()
                 .id(id)
                 .createdDate(getCreatedDate())
                 .libraryMember(libraryMember)
-                .loanBooks(this.loanBooks.stream().map(book -> book.to()).collect(Collectors.toList()))
+                .loanBooks(this.loanBooks.stream().map(book -> book.toDomain()).collect(Collectors.toList()))
                 .build();
     }
 }

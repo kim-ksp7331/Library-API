@@ -2,10 +2,11 @@ package ksp7331.practice.libraryAPI.loan.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.IntegrationTest;
-import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.loan.domain.LoanState;
-import ksp7331.practice.libraryAPI.loan.dto.LoanControllerDTO;
+import ksp7331.practice.libraryAPI.loan.dto.CreateLoan;
+import ksp7331.practice.libraryAPI.loan.dto.ReturnBook;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class LoanIntegrationTest extends IntegrationTest {
     void postLoan() throws Exception {
         // given
         List<Long> bookIds = List.of(1L, 2L);
-        LoanControllerDTO.Post post = LoanControllerDTO.Post.builder().bookIds(bookIds).build();
+        CreateLoan post = CreateLoan.builder().bookIds(bookIds).build();
         Long libraryMemberId = 1L;
 
         String content = objectMapper.writeValueAsString(post);
@@ -63,7 +64,7 @@ public class LoanIntegrationTest extends IntegrationTest {
     void postLoanWhenBooksNotExists() throws Exception {
         // given
         List<Long> bookIds = List.of(1L, 2L);
-        LoanControllerDTO.Post post = LoanControllerDTO.Post.builder().bookIds(bookIds).build();
+        CreateLoan post = CreateLoan.builder().bookIds(bookIds).build();
         Long libraryMemberId = 2L;
 
         String content = objectMapper.writeValueAsString(post);
@@ -85,7 +86,7 @@ public class LoanIntegrationTest extends IntegrationTest {
     void postLoanWithExceededBooks() throws Exception {
         // given
         List<Long> bookIds = List.of(1L, 2L, 3L, 4L, 5L, 6L);
-        LoanControllerDTO.Post post = LoanControllerDTO.Post.builder().bookIds(bookIds).build();
+        CreateLoan post = CreateLoan.builder().bookIds(bookIds).build();
         Long libraryMemberId = 1L;
 
         String content = objectMapper.writeValueAsString(post);
@@ -111,7 +112,7 @@ public class LoanIntegrationTest extends IntegrationTest {
         long loanId = 1L;
         long libraryMemberId = 2L;
         List<Long> bookIds = List.of(1L);
-        LoanControllerDTO.ReturnPost returnPost = LoanControllerDTO.ReturnPost.builder().bookIds(bookIds).build();
+        ReturnBook returnPost = ReturnBook.builder().bookIds(bookIds).build();
 
         String content = objectMapper.writeValueAsString(returnPost);
         String urlTemplates = "/members/{library-member-id}/loan/{loan-id}";

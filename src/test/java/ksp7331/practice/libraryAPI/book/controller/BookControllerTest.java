@@ -1,13 +1,11 @@
 package ksp7331.practice.libraryAPI.book.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ksp7331.practice.libraryAPI.book.dto.BookControllerDTO;
-import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
-import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
+import ksp7331.practice.libraryAPI.book.dto.*;
 import ksp7331.practice.libraryAPI.book.service.BookService;
-import ksp7331.practice.libraryAPI.common.dto.MultiResponseDTO;
-import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
-import org.hamcrest.Matchers;
+import ksp7331.practice.libraryAPI.library.entity.Library;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
@@ -22,13 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.headers.HeaderDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
-import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -36,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import static org.hamcrest.Matchers.*;
@@ -56,8 +47,6 @@ class BookControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private BookService bookService;
-    @MockBean
-    private BookMapper bookMapper;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -75,10 +64,7 @@ class BookControllerTest {
         post.put("publisher", publisher);
 
         String content = objectMapper.writeValueAsString(post);
-
-        BDDMockito.given(bookMapper.controllerDTOToServiceDTO(Mockito.any(BookControllerDTO.Post.class), Mockito.anyLong()))
-                .willReturn(BookServiceDTO.CreateParam.builder().build());
-        BDDMockito.given(bookService.createNewBook(Mockito.any(BookServiceDTO.CreateParam.class)))
+        BDDMockito.given(bookService.createNewBook(Mockito.any(BookCreate.class)))
                 .willReturn(bookId);
 
         String urlTemplate = "/libraries/{library-id}/books";
@@ -147,14 +133,13 @@ class BookControllerTest {
         long libraryId = 1L;
         String libraryName = "lib1";
 
-        LibraryControllerDTO.Response libraryResponse = LibraryControllerDTO.Response.builder()
+        Library library = Library.builder()
                 .id(libraryId).name(libraryName).build();
-        BookControllerDTO.Response response = BookControllerDTO.Response.builder()
-                .bookId(bookId).name(name).author(author).publisher(publisher).libraries(List.of(libraryResponse)).build();
+        Book book = Book.builder()
+                .id(bookId).name(name).author(author).publisher(publisher).build();
+        book.addLibraryBook(LibraryBook.builder().library(library).build());
 
-        BDDMockito.given(bookService.findBook(Mockito.anyLong())).willReturn(BookServiceDTO.Result.builder().build());
-        BDDMockito.given(bookMapper.serviceDTOToControllerDTO(Mockito.any(BookServiceDTO.Result.class)))
-                .willReturn(response);
+        BDDMockito.given(bookService.getById(Mockito.anyLong())).willReturn(book);
 
         String urlTemplate = "/books/{book-id}";
 
@@ -198,8 +183,7 @@ class BookControllerTest {
         int size = 3;
         String urlTemplate = "/books";
 
-        BookServiceDTO.PageParam param = BookServiceDTO.PageParam.builder().build();
-        Page<BookServiceDTO.Result> results = new PageImpl<>(List.of(BookServiceDTO.Result.builder().build()));
+        BookPageCreate param = BookPageCreate.builder().build();
 
         long bookId = 1L;
         String name = "book";
@@ -209,24 +193,22 @@ class BookControllerTest {
         long libraryId = 1L;
         String libraryName = "lib1";
 
-        LibraryControllerDTO.Response libraryResponse = LibraryControllerDTO.Response.builder()
+        Library library = Library.builder()
                 .id(libraryId).name(libraryName).build();
 
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<BookControllerDTO.Response> bookList = LongStream.rangeClosed(1, 3).mapToObj(i -> BookControllerDTO.Response.builder()
-                .bookId(i)
-                .name(name + i)
-                .author(author + i)
-                .publisher(publisher + i)
-                .libraries(List.of(libraryResponse))
-                .build()).collect(Collectors.toList());
-        Page<BookControllerDTO.Response> responses = new PageImpl<>(bookList, pageable, bookList.size());
-        MultiResponseDTO<BookControllerDTO.Response> dto = MultiResponseDTO.<BookControllerDTO.Response>builder()
-                .data(responses.getContent()).page(responses).build();
-
-        BDDMockito.given(bookMapper.controllerDTOToServiceDTOForPage(Mockito.any(BookControllerDTO.FindPage.class))).willReturn(param);
-        BDDMockito.given(bookService.findBooks(param)).willReturn(results);
-        BDDMockito.given(bookMapper.serviceDTOsToControllerDTO(results)).willReturn(dto);
+        List<Book> bookList = LongStream.rangeClosed(1, 3).mapToObj(i -> {
+            Book book = Book.builder()
+                    .id(i)
+                    .name(name + i)
+                    .author(author + i)
+                    .publisher(publisher + i)
+                    .build();
+            book.addLibraryBook(LibraryBook.builder().library(library).build());
+            return book;
+        }).collect(Collectors.toList());
+        Page<Book> bookPage = new PageImpl<>(bookList, pageable, bookList.size());
+        BDDMockito.given(bookService.findAll(Mockito.any(BookPageCreate.class))).willReturn(bookPage);
 
         // when
         ResultActions actions = mockMvc.perform(

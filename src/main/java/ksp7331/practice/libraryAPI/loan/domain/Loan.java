@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.domain;
 
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.domain.BookState;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 
@@ -41,7 +42,7 @@ public class Loan {
             loanBooks.add(LoanBook.builder()
                     .libraryBook(book)
                     .build());
-            book.setState(LibraryBook.State.NOT_LOANABLE);
+            book.setState(BookState.NOT_LOANABLE);
         });
     }
 

@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.domain;
 
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.domain.BookState;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -24,6 +25,6 @@ public class LoanBook {
     public void returnBook() {
         state = LoanState.RETURN;
         returnDate = LocalDateTime.now();
-        getLibraryBook().setState(LibraryBook.State.LOANABLE);
+        getLibraryBook().setState(BookState.LOANABLE);
     }
 }

@@ -1,7 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.service;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.book.service.LibraryBookService;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
@@ -9,7 +9,8 @@ import ksp7331.practice.libraryAPI.library.entity.Library;
 import ksp7331.practice.libraryAPI.loan.domain.Loan;
 import ksp7331.practice.libraryAPI.loan.domain.LoanBook;
 import ksp7331.practice.libraryAPI.loan.domain.LoanState;
-import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
+import ksp7331.practice.libraryAPI.loan.dto.CreateLoan;
+import ksp7331.practice.libraryAPI.loan.dto.ReturnBook;
 import ksp7331.practice.libraryAPI.loan.service.port.LoanRepository;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
@@ -27,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
@@ -53,8 +53,7 @@ class LoanServiceTest {
         long loanId = 3L;
         List<Long> bookIds = List.of(1L);
 
-        LoanServiceDTO.CreateParam param = LoanServiceDTO.CreateParam.builder()
-                .libraryMemberId(libraryMemberId).bookIds(bookIds).build();
+        CreateLoan createLoan = CreateLoan.builder().bookIds(bookIds).libraryMemberId(libraryMemberId).build();
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
         List<LibraryBook> libraryBooks = List.of(LibraryBook.builder().build());
 
@@ -66,7 +65,7 @@ class LoanServiceTest {
         BDDMockito.given(loanRepository.create(Mockito.any(Loan.class))).willReturn(loan);
 
         // when
-        Long result = loanService.createLoan(param);
+        Long result = loanService.createLoan(createLoan);
 
         // then
         assertThat(result).isEqualTo(loanId);
@@ -81,8 +80,8 @@ class LoanServiceTest {
         int loanedBookCount = 2;
         List<Long> bookIds = List.of(1L, 2L, 3L, 4L);
 
-        LoanServiceDTO.CreateParam param = LoanServiceDTO.CreateParam.builder()
-                .libraryMemberId(libraryMemberId).bookIds(bookIds).build();
+        CreateLoan createLoan = CreateLoan.builder().bookIds(bookIds).libraryMemberId(libraryMemberId).build();
+
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
         libraryMember.addLoanBooksCount(loanedBookCount);
 
@@ -95,7 +94,7 @@ class LoanServiceTest {
 
 
         // when // then
-        BusinessLogicException exception = assertThrows(BusinessLogicException.class, () -> loanService.createLoan(param));
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class, () -> loanService.createLoan(createLoan));
         assertThat(exception.getExceptionCode()).isEqualTo(ExceptionCode.LOAN_EXCEEDED);
     }
 
@@ -106,8 +105,8 @@ class LoanServiceTest {
         long libraryMemberId = 1L;
         long libraryId = 1L;
 
-        LoanServiceDTO.CreateParam param = LoanServiceDTO.CreateParam.builder()
-                .libraryMemberId(libraryMemberId).build();
+        CreateLoan createLoan = CreateLoan.builder().libraryMemberId(libraryMemberId).build();
+
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
 
         Loan loan = Loan.builder().createdDate(LocalDateTime.now().minusDays(20)).build();
@@ -118,7 +117,7 @@ class LoanServiceTest {
 
 
         // when // then
-        BusinessLogicException exception = assertThrows(BusinessLogicException.class, () -> loanService.createLoan(param));
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class, () -> loanService.createLoan(createLoan));
         assertThat(exception.getExceptionCode()).isEqualTo(ExceptionCode.LOAN_RESTRICTED);
     }
 
@@ -129,14 +128,13 @@ class LoanServiceTest {
         long libraryMemberId = 1L;
         long libraryId = 1L;
 
-        LoanServiceDTO.CreateParam param = LoanServiceDTO.CreateParam.builder()
-                .libraryMemberId(libraryMemberId).build();
+        CreateLoan createLoan = CreateLoan.builder().libraryMemberId(libraryMemberId).build();
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
         libraryMember.setLoanAvailableDay(LocalDate.now().plusDays(3));
         BDDMockito.given(libraryMemberService.findVerifiedLibraryMember(libraryMemberId)).willReturn(libraryMember);
 
         // when // then
-        BusinessLogicException exception = assertThrows(BusinessLogicException.class, () -> loanService.createLoan(param));
+        BusinessLogicException exception = assertThrows(BusinessLogicException.class, () -> loanService.createLoan(createLoan));
         assertThat(exception.getExceptionCode()).isEqualTo(ExceptionCode.LOAN_RESTRICTED);
     }
 
@@ -148,7 +146,7 @@ class LoanServiceTest {
         long bookId = 1L;
         List<Long> bookIds = List.of(bookId);
 
-        LoanServiceDTO.ReturnBookParam param = LoanServiceDTO.ReturnBookParam.builder().loanId(loanId).bookIds(bookIds).build();
+        ReturnBook returnBook = ReturnBook.builder().loanId(loanId).bookIds(bookIds).build();
 
         LoanBook loanBook = LoanBook.builder()
                 .libraryBook(LibraryBook.builder().book(Book.builder()
@@ -165,11 +163,11 @@ class LoanServiceTest {
                 .loanBooks(List.of(loanBook))
                 .createdDate(LocalDateTime.now())
                 .build();
-
-        BDDMockito.given(loanRepository.update(Mockito.anyLong(), Mockito.any(Function.class))).willReturn(loan);
+        BDDMockito.given(loanRepository.findById(Mockito.anyLong())).willReturn(Optional.ofNullable(Loan.builder().build()));
+        BDDMockito.given(loanRepository.update(Mockito.any(Loan.class))).willReturn(loan);
 
         // when
-        Loan result = loanService.returnBook(param);
+        Loan result = loanService.returnBook(returnBook);
 
         // then
         assertThat(result).isEqualTo(loan);

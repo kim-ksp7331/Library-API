@@ -1,9 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.controller;
 
 import ksp7331.practice.libraryAPI.loan.domain.Loan;
-import ksp7331.practice.libraryAPI.loan.dto.LoanControllerDTO;
-import ksp7331.practice.libraryAPI.loan.dto.LoanServiceDTO;
-import ksp7331.practice.libraryAPI.loan.dto.Response;
+import ksp7331.practice.libraryAPI.loan.dto.*;
 import ksp7331.practice.libraryAPI.loan.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +20,10 @@ public class LoanController {
 
     @PostMapping
     public ResponseEntity<Void> postLoan(@PathVariable("library-member-id") Long libraryMemberId,
-                                         @RequestBody LoanControllerDTO.Post post) {
+                                         @RequestBody CreateLoan createLoan) {
         String LOAN_URL_PREFIX = "/members/{library-member-id}/loan";
-
-        LoanServiceDTO.CreateParam createParam = LoanServiceDTO.CreateParam.builder()
-                .bookIds(post.getBookIds()).libraryMemberId(libraryMemberId).build();
-        Long id = loanService.createLoan(createParam);
-
+        createLoan.setLibraryMemberId(libraryMemberId);
+        Long id = loanService.createLoan(createLoan);
         URI uri = UriComponentsBuilder.newInstance()
                 .path(LOAN_URL_PREFIX + "/{loan-id}")
                 .buildAndExpand(libraryMemberId, id)
@@ -38,9 +33,9 @@ public class LoanController {
     }
     @PostMapping("/{loan-id}")
     public ResponseEntity<Response> postReturnBook(@PathVariable("loan-id") Long loanId,
-                                                   @RequestBody LoanControllerDTO.ReturnPost dto){
-        LoanServiceDTO.ReturnBookParam param = LoanServiceDTO.ReturnBookParam.builder().loanId(loanId).bookIds(dto.getBookIds()).build();
-        Loan loan = loanService.returnBook(param);
+                                                   @RequestBody ReturnBook returnBook){
+        returnBook.setLoanId(loanId);
+        Loan loan = loanService.returnBook(returnBook);
         return ResponseEntity.ok(Response.from(loan));
     }
 

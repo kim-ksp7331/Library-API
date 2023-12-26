@@ -1,8 +1,8 @@
-package ksp7331.practice.libraryAPI.book.repository;
+package ksp7331.practice.libraryAPI.book.infrastructure;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
-import ksp7331.practice.libraryAPI.book.entity.QLibraryBook;
+import ksp7331.practice.libraryAPI.book.domain.BookState;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +20,7 @@ public class LibraryBookCustomRepositoryImpl implements LibraryBookCustomReposit
         return jpaQueryFactory.selectFrom(libraryBook)
                 .innerJoin(libraryBook.book).fetchJoin()
                 .where(libraryBook.library.id.eq(libraryId))
-                .where(libraryBook.book.id.in(bookIds).and(libraryBook.state.eq(LibraryBook.State.LOANABLE)))
+                .where(libraryBook.book.id.in(bookIds).and(libraryBook.state.eq(BookState.LOANABLE)))
                 .fetch();
     }
 }

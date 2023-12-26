@@ -1,18 +1,16 @@
 package ksp7331.practice.libraryAPI.loan.infrastructure.entity;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
-import ksp7331.practice.libraryAPI.loan.domain.LoanBook;
+import ksp7331.practice.libraryAPI.book.domain.BookState;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.loan.domain.LoanState;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class LoanTest {
 
@@ -21,9 +19,10 @@ class LoanTest {
         // given
         LibraryMember libraryMember = LibraryMember.builder().id(3L).build();
         LocalDateTime returnDate = LocalDateTime.now().minusDays(2);
-        LibraryBook libraryBook = LibraryBook.builder().build();
-        List<LoanBook> loanBooks = List.of(
-                LoanBook.builder()
+        ksp7331.practice.libraryAPI.book.domain.LibraryBook libraryBook = ksp7331.practice.libraryAPI.book.domain.LibraryBook.builder()
+                .id(1L).state(BookState.LOANABLE).book(ksp7331.practice.libraryAPI.book.domain.Book.builder().id(1L).build()).build();
+        List<ksp7331.practice.libraryAPI.loan.domain.LoanBook> loanBooks = List.of(
+                ksp7331.practice.libraryAPI.loan.domain.LoanBook.builder()
                         .id(2L)
                         .state(LoanState.RETURN)
                         .returnDate(returnDate)
@@ -44,7 +43,7 @@ class LoanTest {
         assertThat(loan.getLoanBooks().get(0).getId()).isEqualTo(2L);
         assertThat(loan.getLoanBooks().get(0).getState()).isEqualTo(LoanState.RETURN);
         assertThat(loan.getLoanBooks().get(0).getReturnDate()).isEqualTo(returnDate);
-        assertThat(loan.getLoanBooks().get(0).getLibraryBook()).isEqualTo(libraryBook);
+        assertThat(loan.getLoanBooks().get(0).getLibraryBook().getId()).isEqualTo(libraryBook.getId());
         assertThat(loan.getLoanBooks().get(0).getLoan()).isEqualTo(loan);
     }
 
@@ -52,31 +51,28 @@ class LoanTest {
     void update() {
         // given
         LibraryMember libraryMember = LibraryMember.builder().id(3L).build();
-        LibraryBook libraryBook = LibraryBook.builder().build();
+        ksp7331.practice.libraryAPI.book.domain.LibraryBook libraryBook = ksp7331.practice.libraryAPI.book.domain.LibraryBook
+                .builder().id(1L).state(BookState.NOT_LOANABLE).book(ksp7331.practice.libraryAPI.book.domain.Book.builder().id(1L).build()).build();
         List<LoanBook> loanBooks = List.of(
                 LoanBook.builder()
                         .id(1L)
                         .state(LoanState.LOANED)
-                        .libraryBook(libraryBook)
+                        .libraryBook(LibraryBook.from(libraryBook))
                         .build(),
                 LoanBook.builder()
                         .id(2L)
                         .state(LoanState.LOANED)
-                        .libraryBook(libraryBook)
+                        .libraryBook(LibraryBook.from(libraryBook))
                         .build()
         );
-        ksp7331.practice.libraryAPI.loan.domain.Loan domain = ksp7331.practice.libraryAPI.loan.domain.Loan.builder()
-                .id(1L)
-                .libraryMember(libraryMember)
-                .loanBooks(loanBooks)
-                .build();
 
-        Loan loan = Loan.from(domain);
+
+        Loan loan = Loan.builder().id(1L).libraryMember(libraryMember).loanBooks(loanBooks).build();
 
 
         LocalDateTime returnDate = LocalDateTime.now().minusDays(2);
-        List<LoanBook> updatedLoanBooks = List.of(
-                LoanBook.builder()
+        List<ksp7331.practice.libraryAPI.loan.domain.LoanBook> updatedLoanBooks = List.of(
+                ksp7331.practice.libraryAPI.loan.domain.LoanBook.builder()
                         .id(2L)
                         .state(LoanState.RETURN)
                         .returnDate(returnDate)
@@ -103,7 +99,7 @@ class LoanTest {
     }
 
     @Test
-    void to() {
+    void toDomain() {
         // given
         LibraryMember libraryMember = LibraryMember.builder().id(3L).build();
         LocalDateTime returnDate = LocalDateTime.now().minusDays(2);
@@ -116,23 +112,19 @@ class LoanTest {
                         .libraryBook(libraryBook)
                         .build()
         );
-        ksp7331.practice.libraryAPI.loan.domain.Loan domain = ksp7331.practice.libraryAPI.loan.domain.Loan.builder()
-                .id(1L)
-                .libraryMember(libraryMember)
-                .loanBooks(loanBooks)
-                .build();
-        Loan loan = Loan.from(domain);
+
+        Loan loan = Loan.builder().id(2L).libraryMember(libraryMember).loanBooks(loanBooks).build();
 
         // when
-        ksp7331.practice.libraryAPI.loan.domain.Loan result = loan.to();
+        ksp7331.practice.libraryAPI.loan.domain.Loan result = loan.toDomain();
 
         // then
-        assertThat(result.getId()).isEqualTo(domain.getId());
+        assertThat(result.getId()).isEqualTo(loan.getId());
         assertThat(result.getLibraryMember().getId()).isEqualTo(libraryMember.getId());
-        assertThat(result.getLoanBooks().get(0).getId()).isEqualTo(domain.getLoanBooks().get(0).getId());
-        assertThat(result.getLoanBooks().get(0).getState()).isEqualTo(domain.getLoanBooks().get(0).getState());
-        assertThat(result.getLoanBooks().get(0).getReturnDate()).isEqualTo(domain.getLoanBooks().get(0).getReturnDate());
+        assertThat(result.getLoanBooks().get(0).getId()).isEqualTo(loan.getLoanBooks().get(0).getId());
+        assertThat(result.getLoanBooks().get(0).getState()).isEqualTo(loan.getLoanBooks().get(0).getState());
+        assertThat(result.getLoanBooks().get(0).getReturnDate()).isEqualTo(loan.getLoanBooks().get(0).getReturnDate());
         assertThat(result.getLoanBooks().get(0).getLibraryBook().getBook().getId())
-                .isEqualTo(domain.getLoanBooks().get(0).getLibraryBook().getBook().getId());
+                .isEqualTo(loan.getLoanBooks().get(0).getLibraryBook().getBook().getId());
     }
 }

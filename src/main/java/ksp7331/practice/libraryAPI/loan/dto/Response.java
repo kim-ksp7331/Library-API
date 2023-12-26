@@ -27,6 +27,7 @@ public class Response {
     @Builder
     public static class Book {
         private Long id;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime returnDate;
         private String name;
         private String author;
@@ -36,7 +37,7 @@ public class Response {
 
     public static Response from(Loan loan) {
         List<Response.Book> books = loan.getLoanBooks().stream().map(loanBook -> {
-            ksp7331.practice.libraryAPI.book.entity.Book book = loanBook.getLibraryBook().getBook();
+            ksp7331.practice.libraryAPI.book.domain.Book book = loanBook.getLibraryBook().getBook();
             return Response.Book.builder()
                     .id(book.getId())
                     .state(loanBook.getState().name())

@@ -1,14 +1,9 @@
-package ksp7331.practice.libraryAPI.book.repository;
+package ksp7331.practice.libraryAPI.book.infrastructure;
 
-import ksp7331.practice.libraryAPI.QueryDslConfig;
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
 import ksp7331.practice.libraryAPI.config.DbTestConfig;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
-import org.assertj.core.api.ObjectAssert;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -17,21 +12,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 @Import(DbTestConfig.class)
-class BookRepositoryTest {
+class BookJpaRepositoryTest {
 
     @Autowired
-    private BookRepository bookRepository;
+    private BookJpaRepository bookRepobookJpaRepository;
     @Autowired
     private DbTestInitializer dbTestInitializer;
 
@@ -43,7 +35,7 @@ class BookRepositoryTest {
         List<Library> libraries = dbTestInitializer.getLibraries();
 
         // when
-        Optional<Book> optionalBook = bookRepository.findByIdFetchJoin(bookId);
+        Optional<Book> optionalBook = bookRepobookJpaRepository.findByIdFetchJoin(bookId);
 
         // then
         assertThat(optionalBook.isPresent()).isTrue();
@@ -69,7 +61,7 @@ class BookRepositoryTest {
                 .stream().map(b -> b.getName()).sorted().limit(size).toArray(String[]::new);
 
         // when
-        Page<Book> bookPage = bookRepository.findAllPagination(pageable);
+        Page<Book> bookPage = bookRepobookJpaRepository.findAllPagination(pageable);
 
         // then
         assertThat(bookPage).hasSize(size);

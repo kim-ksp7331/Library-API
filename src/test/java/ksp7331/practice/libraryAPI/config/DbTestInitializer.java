@@ -1,9 +1,12 @@
 package ksp7331.practice.libraryAPI.config;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.domain.BookState;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.loan.domain.Loan;
+import ksp7331.practice.libraryAPI.loan.domain.LoanState;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanBook;
 import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
 import ksp7331.practice.libraryAPI.member.entity.Member;
 import org.springframework.stereotype.Component;
@@ -52,14 +55,11 @@ public class DbTestInitializer {
             TestEntity.newLibraryMember(2L, 2L, "010-0000-1111")
     );
     private List<Loan> loans = List.of(
-            Loan.from(
-                    libraryMembers.get(1),
-                    List.of(
-                            libraryBooks.get(1),
-                            libraryBooks.get(3)
-                    )
-            ),
-            TestEntity.oneBookReturnedLoan(libraryMembers.get(1), List.of(libraryBooks.get(5), libraryBooks.get(7)))
+            TestEntity.newLoan(libraryMembers.get(1), List.of(
+                    libraryBooks.get(1),
+                    libraryBooks.get(3)
+            )),
+            TestEntity.oneBookReturnedLoan(libraryMembers.get(1), libraryBooks.get(5), libraryBooks.get(7))
     );
 
 
@@ -73,7 +73,7 @@ public class DbTestInitializer {
         testRepository.saveLibraryBooks(libraryBooks);
         testRepository.saveMembers(members);
         testRepository.saveLibraryMembers(libraryMembers);
-        loans = testRepository.saveLoans(loans);
+        testRepository.saveLoans(loans);
     }
 
     public List<Book> getBooks() {
@@ -96,9 +96,8 @@ public class DbTestInitializer {
         return libraryMembers;
     }
 
-    public List<ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan> getLoans() {
-        return loans.stream()
-                .map(ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan::from).collect(Collectors.toList());
+    public List<Loan> getLoans() {
+        return loans;
     }
 
 
@@ -107,7 +106,7 @@ public class DbTestInitializer {
         public static LibraryBook newLibraryBook(Long bookId, Long libraryId) {
             Book b = Book.builder().id(bookId).build();
             Library l = Library.builder().id(libraryId).build();
-            return new LibraryBook(b, l);
+            return LibraryBook.builder().book(b).library(l).build();
         }
 
         public static LibraryMember newLibraryMember(Long memberId, Long libraryId, String phone) {
@@ -116,9 +115,27 @@ public class DbTestInitializer {
             return new LibraryMember(null, member, library, phone);
         }
 
-        public static Loan oneBookReturnedLoan(LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
-            Loan loan = Loan.from(libraryMember, libraryBooks);
-            loan.getLoanBooks().get(0).returnBook();
+        public static Loan newLoan(LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
+            List<LoanBook> loanBooks = libraryBooks.stream().map(libraryBook -> {
+                        libraryBook.setState(BookState.NOT_LOANABLE);
+                        return LoanBook.builder().libraryBook(libraryBook).build();
+                    })
+                    .collect(Collectors.toList());
+            Loan loan = Loan.builder()
+                    .libraryMember(libraryMember)
+                    .loanBooks(loanBooks)
+                    .build();
+            return loan;
+        }
+
+        public static Loan oneBookReturnedLoan(LibraryMember libraryMember, LibraryBook returnedBook, LibraryBook book) {
+            LoanBook returnedLoanBook = LoanBook.builder().libraryBook(returnedBook).state(LoanState.RETURN).build();
+            LoanBook loanBook = LoanBook.builder().libraryBook(book).build();
+            Loan loan = Loan.builder()
+                    .libraryMember(libraryMember)
+                    .loanBooks(List.of(returnedLoanBook, loanBook))
+                    .build();
+            returnedBook.setState(BookState.LOANABLE);
             return loan;
         }
     }

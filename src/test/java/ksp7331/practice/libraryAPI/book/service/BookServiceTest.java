@@ -1,9 +1,10 @@
 package ksp7331.practice.libraryAPI.book.service;
 
-import ksp7331.practice.libraryAPI.book.dto.BookServiceDTO;
-import ksp7331.practice.libraryAPI.book.entity.Book;
-import ksp7331.practice.libraryAPI.book.mapper.BookMapper;
-import ksp7331.practice.libraryAPI.book.repository.BookRepository;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.book.dto.BookCreate;
+import ksp7331.practice.libraryAPI.book.dto.BookPageCreate;
+import ksp7331.practice.libraryAPI.book.dto.LibraryBookCreate;
+import ksp7331.practice.libraryAPI.book.service.port.BookRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,23 +30,20 @@ class BookServiceTest {
     private BookRepository bookRepository;
     @Mock
     private LibraryBookService libraryBookService;
-    @Mock
-    private BookMapper bookMapper;
 
     @DisplayName("신규 book 엔티티 생성")
     @Test
     void createNewBook() {
         // given
         long libraryId = 1L;
-        BookServiceDTO.CreateParam createParam = BookServiceDTO.CreateParam.builder().libraryId(libraryId).build();
+        BookCreate bookCreate = BookCreate.builder().build();
+        bookCreate.setLibraryId(libraryId);
 
         long bookId = 3L;
-        BDDMockito.given(bookMapper.serviceDTOToEntity(Mockito.any(BookServiceDTO.CreateParam.class)))
-                .willReturn(Book.builder().build());
-        BDDMockito.given(bookRepository.save(Mockito.any(Book.class))).willReturn(Book.builder().id(bookId).build());
+        BDDMockito.given(bookRepository.create(Mockito.any(Book.class))).willReturn(Book.builder().id(bookId).build());
 
         // when
-        Long result = bookService.createNewBook(createParam);
+        Long result = bookService.createNewBook(bookCreate);
 
         // then
         assertThat(result).isEqualTo(bookId);
@@ -57,12 +55,12 @@ class BookServiceTest {
         // given
         long bookId = 1L;
         long libraryId = 1L;
-        BookServiceDTO.AddParam addParam = BookServiceDTO.AddParam.builder()
+        LibraryBookCreate libraryBookCreate = LibraryBookCreate.builder()
                 .bookId(bookId).libraryId(libraryId).build();
-        BDDMockito.given(bookRepository.findByIdFetchJoin(Mockito.anyLong()))
+        BDDMockito.given(bookRepository.findById(Mockito.anyLong()))
                 .willReturn(Optional.ofNullable(Book.builder().build()));
         // when //then
-        assertThatCode(() -> bookService.addBookToLibrary(addParam)).doesNotThrowAnyException();
+        assertThatCode(() -> bookService.addBookToLibrary(libraryBookCreate)).doesNotThrowAnyException();
     }
 
     @DisplayName("id를 통해 book 엔티티 조회")
@@ -70,17 +68,17 @@ class BookServiceTest {
     void findBook() {
         // given
         long bookId = 1L;
-        BookServiceDTO.Result book = BookServiceDTO.Result.builder()
+
+        Book book = Book.builder()
                 .name("book1")
                 .author("author1")
+                .publisher("publisher1")
                 .build();
-
-        BDDMockito.given(bookRepository.findByIdFetchJoin(Mockito.anyLong()))
-                .willReturn(Optional.ofNullable(Book.builder().build()));
-        BDDMockito.given(bookMapper.entityToServiceDTO(Mockito.any(Book.class))).willReturn(book);
+        BDDMockito.given(bookRepository.findById(Mockito.anyLong()))
+                .willReturn(Optional.ofNullable(book));
 
         // when
-        BookServiceDTO.Result result = bookService.findBook(bookId);
+        Book result = bookService.getById(bookId);
 
         // then
         assertThat(result).isEqualTo(book);
@@ -92,17 +90,15 @@ class BookServiceTest {
         // given
         int page = 1;
         int size = 3;
-        BookServiceDTO.PageParam param = BookServiceDTO.PageParam.builder().page(page).size(size).build();
+        BookPageCreate param = BookPageCreate.builder().page(page).size(size).build();
         Page<Book> books = new PageImpl<>(List.of(Book.builder().build()));
-        Page<BookServiceDTO.Result> pageResult = new PageImpl<>(List.of(BookServiceDTO.Result.builder().build()));
 
         BDDMockito.given(bookRepository.findAllPagination(Mockito.any(Pageable.class))).willReturn(books);
-        BDDMockito.given(bookMapper.entitiesToServiceDTOs(books)).willReturn(pageResult);
 
         // when
-        Page<BookServiceDTO.Result> result = bookService.findBooks(param);
+        Page<Book> result = bookService.findAll(param);
 
         // then
-        assertThat(result).isEqualTo(pageResult);
+        assertThat(result).isEqualTo(books);
     }
 }

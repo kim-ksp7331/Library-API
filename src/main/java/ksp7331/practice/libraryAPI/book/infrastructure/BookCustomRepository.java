@@ -1,6 +1,6 @@
-package ksp7331.practice.libraryAPI.book.repository;
+package ksp7331.practice.libraryAPI.book.infrastructure;
 
-import ksp7331.practice.libraryAPI.book.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

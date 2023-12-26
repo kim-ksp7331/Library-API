@@ -1,6 +1,6 @@
-package ksp7331.practice.libraryAPI.book.repository;
+package ksp7331.practice.libraryAPI.book.infrastructure;
 
-import ksp7331.practice.libraryAPI.book.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
 
 import java.util.List;
 
