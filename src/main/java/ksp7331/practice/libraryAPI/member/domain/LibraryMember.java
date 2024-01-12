@@ -1,36 +1,26 @@
-package ksp7331.practice.libraryAPI.member.entity;
+package ksp7331.practice.libraryAPI.member.domain;
 
-import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
-import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
-import lombok.*;
 
-import javax.persistence.*;
+import ksp7331.practice.libraryAPI.library.domain.Library;
+import ksp7331.practice.libraryAPI.loan.domain.Loan;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LibraryMember extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class LibraryMember {
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
     private Member member;
-    @ManyToOne
-    @JoinColumn(name = "LIBRARY_ID")
     private Library library;
-    @OneToMany(mappedBy = "libraryMember", cascade = CascadeType.ALL)
     private List<Phone> phones = new ArrayList<>();
-    @Column(nullable = false)
     private Integer loanBooksCount = 0;
-    @Column(nullable = false)
     @Setter
     private LocalDate loanAvailableDay = LocalDate.EPOCH;
 
@@ -38,13 +28,36 @@ public class LibraryMember extends BaseTimeEntity {
         this.loanBooksCount += count;
     }
 
-    @Builder
-    public LibraryMember(Long id, Member member, Library library, String phone) {
+    public LibraryMember(Long id, Member member, Library library, List<Phone> phones) {
         this.id = id;
+        setMember(member);
+        this.library = library;
+        this.phones = phones;
+    }
+
+    private List<Loan> loans = new ArrayList<>();
+
+    @Builder
+    public LibraryMember(Long id, Member member, Library library, List<Phone> phones, Integer loanBooksCount, LocalDate loanAvailableDay, List<Loan> loans) {
+        this.id = id;
+        setMember(member);
+        this.library = library;
+        Optional.ofNullable(phones).ifPresent(p -> this.phones = p);
+        Optional.ofNullable(loanBooksCount).ifPresent(l -> this.loanBooksCount = l);
+        Optional.ofNullable(loanAvailableDay).ifPresent(l -> this.loanAvailableDay = l);
+        Optional.ofNullable(loans).ifPresent(l -> this.loans = l);
+    }
+
+    private LibraryMember(Member member, Library library, String phone) {
         setMember(member);
         this.library = library;
         addPhone(phone);
     }
+
+    public void addLoan(Loan loan) {
+        loans.add(loan);
+    }
+
     private void setMember(Member member) {
         Optional.ofNullable(member).ifPresent(m -> {
             this.member = m;
@@ -63,9 +76,10 @@ public class LibraryMember extends BaseTimeEntity {
         });
     }
 
+    public static LibraryMember from(Member member, Library library, String phone) {
+        return new LibraryMember(member, library, phone);
+    }
     private void checkDuplicatedPhoneNumber(String phoneNumber) {
         if(phones.contains(phoneNumber)) throw new BusinessLogicException(ExceptionCode.PHONE_DUPLICATED);
     }
-    @OneToMany(mappedBy = "libraryMember", cascade = CascadeType.REMOVE)
-    private List<Loan> loans = new ArrayList<>();
 }

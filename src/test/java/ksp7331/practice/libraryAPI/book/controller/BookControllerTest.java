@@ -5,7 +5,7 @@ import ksp7331.practice.libraryAPI.book.domain.Book;
 import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.book.dto.*;
 import ksp7331.practice.libraryAPI.book.service.BookService;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.domain.Library;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;

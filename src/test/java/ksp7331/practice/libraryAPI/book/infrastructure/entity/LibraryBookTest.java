@@ -1,7 +1,7 @@
 package ksp7331.practice.libraryAPI.book.infrastructure.entity;
 
 import ksp7331.practice.libraryAPI.book.domain.BookState;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
@@ -14,7 +14,7 @@ class LibraryBookTest {
         ksp7331.practice.libraryAPI.book.domain.LibraryBook domain = ksp7331.practice.libraryAPI.book.domain.LibraryBook.builder()
                 .id(1L)
                 .state(BookState.NOT_LOANABLE)
-                .library(Library.builder().id(3L).build())
+                .library(ksp7331.practice.libraryAPI.library.domain.Library.builder().id(3L).build())
                 .book(ksp7331.practice.libraryAPI.book.domain.Book.builder()
                         .id(2L)
                         .name("book1")

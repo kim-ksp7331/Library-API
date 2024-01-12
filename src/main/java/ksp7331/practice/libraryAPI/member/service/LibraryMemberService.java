@@ -2,12 +2,12 @@ package ksp7331.practice.libraryAPI.member.service;
 
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.domain.Library;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
-import ksp7331.practice.libraryAPI.member.dto.MemberServiceDTO;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
-import ksp7331.practice.libraryAPI.member.entity.Member;
-import ksp7331.practice.libraryAPI.member.repository.LibraryMemberRepository;
+import ksp7331.practice.libraryAPI.member.domain.LibraryMember;
+import ksp7331.practice.libraryAPI.member.domain.Member;
+import ksp7331.practice.libraryAPI.member.dto.CreateMember;
+import ksp7331.practice.libraryAPI.member.service.port.LibraryMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,32 +22,29 @@ public class LibraryMemberService {
     private final LibraryService libraryService;
     private final LibraryMemberRepository libraryMemberRepository;
 
-    public Long createLibraryMember(MemberServiceDTO.CreateParam createParam) {
-        Member member = getMember(createParam.getLibraryMemberId(), createParam.getName());
-        Library library = getLibrary(createParam.getLibraryId());
-        LibraryMember libraryMember = LibraryMember.builder()
-                .member(member)
-                .library(library)
-                .phone(createParam.getPhoneNumber())
-                .build();
-        return libraryMemberRepository.save(libraryMember).getId();
+    public Long createLibraryMember(CreateMember createMember) {
+        Member member = getMember(createMember.getLibraryMemberId(), createMember.getName());
+        Library library = getLibrary(createMember.getLibraryId());
+        LibraryMember libraryMember = LibraryMember.from(member, library, createMember.getPhoneNumber());
+        return libraryMemberRepository.create(libraryMember).getId();
     }
 
     public void deleteLibraryMembers(Long id) {
-        LibraryMember libraryMember = findVerifiedLibraryMember(id);
+        LibraryMember libraryMember = getById(id);
+        libraryMemberRepository.delete(libraryMember);
         memberService.deleteMember(libraryMember.getMember());
     }
 
-    public LibraryMember findVerifiedLibraryMember(Long id) {
+    public LibraryMember getById(Long id) {
         Optional<LibraryMember> optionalMember = libraryMemberRepository.findById(id);
         return optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 
     private Member getMember(Long id, String name) {
-        return id == null ? memberService.createMember(name) : findVerifiedLibraryMember(id).getMember();
+        return id == null ? memberService.createMember(name) : getById(id).getMember();
     }
 
     private Library getLibrary(Long id) {
-        return libraryService.findVerifiedLibrary(id);
+        return libraryService.getById(id);
     }
 }

@@ -3,12 +3,10 @@ package ksp7331.practice.libraryAPI.loan.domain;
 import ksp7331.practice.libraryAPI.book.domain.Book;
 import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
-import org.assertj.core.api.Assertions;
+import ksp7331.practice.libraryAPI.member.domain.LibraryMember;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;

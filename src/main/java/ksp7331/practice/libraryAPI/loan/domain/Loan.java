@@ -5,7 +5,7 @@ import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
 
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.domain.LibraryMember;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -28,9 +28,9 @@ public class Loan {
     public Loan(Long id, LibraryMember libraryMember, List<LoanBook> loanBooks, LocalDateTime createdDate) {
         this.id = id;
         this.libraryMember = libraryMember;
+        this.libraryMember.addLoan(this);
         this.createdDate = createdDate;
         if(loanBooks != null) this.loanBooks = loanBooks;
-//        addBooks(libraryBooks);
     }
 
     public void addBooks(List<LibraryBook> libraryBooks) {
@@ -70,8 +70,7 @@ public class Loan {
     }
 
     public static Loan from(LibraryMember libraryMember, List<LibraryBook> libraryBooks) {
-        Loan loan = Loan.builder().build();
-        loan.libraryMember = libraryMember;
+        Loan loan = Loan.builder().libraryMember(libraryMember).build();
         loan.addBooks(libraryBooks);
         return loan;
     }

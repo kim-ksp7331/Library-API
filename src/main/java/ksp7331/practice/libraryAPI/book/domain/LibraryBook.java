@@ -1,6 +1,6 @@
 package ksp7331.practice.libraryAPI.book.domain;
 
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.domain.Library;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

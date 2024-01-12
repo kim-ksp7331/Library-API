@@ -2,10 +2,9 @@ package ksp7331.practice.libraryAPI.library.service;
 
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
-import ksp7331.practice.libraryAPI.library.dto.LibraryServiceDTO;
-import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
-import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
+import ksp7331.practice.libraryAPI.library.domain.Library;
+import ksp7331.practice.libraryAPI.library.dto.LibraryCreate;
+import ksp7331.practice.libraryAPI.library.service.port.LibraryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,23 +17,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LibraryService {
     private final LibraryRepository libraryRepository;
-    private final LibraryMapper libraryMapper;
 
-    public Long createLibrary(String libraryName) {
-        Library library = Library.builder()
-                .name(libraryName)
-                .build();
-        return libraryRepository.save(library).getId();
+    public Long createLibrary(LibraryCreate libraryCreate) {
+        Library library = Library.from(libraryCreate);
+        return libraryRepository.create(library).getId();
     }
 
     @Transactional(readOnly = true)
-    public List<LibraryServiceDTO.Result> findLibraries() {
-        List<Library> libraries = libraryRepository.findAll();
-        return libraryMapper.entitiesToServiceDTOs(libraries);
+    public List<Library> findLibraries() {
+        return libraryRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public Library findVerifiedLibrary(Long id) {
+    public Library getById(Long id) {
         Optional<Library> optionalLibrary = libraryRepository.findById(id);
         return optionalLibrary.orElseThrow(() -> new BusinessLogicException(ExceptionCode.LIBRARY_NOT_FOUND));
     }

@@ -1,5 +1,6 @@
 package ksp7331.practice.libraryAPI.book.infrastructure.entity;
 
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
@@ -35,7 +36,7 @@ class BookTest {
                 .author("author1")
                 .publisher("publisher1")
                 .build();
-        LibraryBook libraryBook = LibraryBook.builder().id(1L).book(book).build();
+        LibraryBook libraryBook = LibraryBook.builder().id(1L).book(book).library(Library.builder().build()).build();
         book.addLibraryBook(libraryBook);
 
         // when

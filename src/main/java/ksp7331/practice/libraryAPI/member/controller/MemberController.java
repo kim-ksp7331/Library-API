@@ -1,7 +1,7 @@
 package ksp7331.practice.libraryAPI.member.controller;
 
-import ksp7331.practice.libraryAPI.member.dto.MemberControllerDTO;
-import ksp7331.practice.libraryAPI.member.mapper.MemberMapper;
+import ksp7331.practice.libraryAPI.member.dto.CreateMember;
+
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
 import ksp7331.practice.libraryAPI.util.UriCreator;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +16,10 @@ import java.net.URI;
 public class MemberController {
     private static String MEMBER_URL_PREFIX = "/members";
     private final LibraryMemberService libraryMemberService;
-    private final MemberMapper memberMapper;
 
     @PostMapping
-    public ResponseEntity<Void> postMember(@RequestBody MemberControllerDTO.Post post) {
-        Long libraryMemberId = libraryMemberService.createLibraryMember(memberMapper.postToCreateParam(post));
+    public ResponseEntity<Void> postMember(@RequestBody CreateMember createMember) {
+        Long libraryMemberId = libraryMemberService.createLibraryMember(createMember);
         URI uri = UriCreator.createUri(MEMBER_URL_PREFIX, libraryMemberId);
         return ResponseEntity.created(uri).build();
     }

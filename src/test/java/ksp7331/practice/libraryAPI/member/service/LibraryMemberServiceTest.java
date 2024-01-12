@@ -2,10 +2,9 @@ package ksp7331.practice.libraryAPI.member.service;
 
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
-import ksp7331.practice.libraryAPI.member.dto.MemberServiceDTO;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
-import ksp7331.practice.libraryAPI.member.entity.Member;
-import ksp7331.practice.libraryAPI.member.repository.LibraryMemberRepository;
+import ksp7331.practice.libraryAPI.member.domain.LibraryMember;
+import ksp7331.practice.libraryAPI.member.dto.CreateMember;
+import ksp7331.practice.libraryAPI.member.service.port.LibraryMemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,13 +36,13 @@ class LibraryMemberServiceTest {
     @Test
     void createLibraryMemberFirst() {
         // given
-        MemberServiceDTO.CreateParam createParam = MemberServiceDTO.CreateParam.builder().build();
+        CreateMember createMember = CreateMember.builder().build();
         long libraryMemberId = 1L;
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).build();
-        BDDMockito.given(libraryMemberRepository.save(Mockito.any(LibraryMember.class))).willReturn(libraryMember);
+        BDDMockito.given(libraryMemberRepository.create(Mockito.any(LibraryMember.class))).willReturn(libraryMember);
 
         // when
-        Long result = libraryMemberService.createLibraryMember(createParam);
+        Long result = libraryMemberService.createLibraryMember(createMember);
 
         // then
         Assertions.assertThat(result).isEqualTo(libraryMemberId);
@@ -54,13 +53,13 @@ class LibraryMemberServiceTest {
         // given
         long memberId = 1L;
         long libraryMemberId = 1L;
-        MemberServiceDTO.CreateParam createParam = MemberServiceDTO.CreateParam.builder().libraryMemberId(memberId).build();
+        CreateMember createMember = CreateMember.builder().libraryMemberId(memberId).build();
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).build();
         BDDMockito.given(libraryMemberRepository.findById(Mockito.anyLong())).willReturn(Optional.ofNullable(LibraryMember.builder().build()));
-        BDDMockito.given(libraryMemberRepository.save(Mockito.any(LibraryMember.class))).willReturn(libraryMember);
+        BDDMockito.given(libraryMemberRepository.create(Mockito.any(LibraryMember.class))).willReturn(libraryMember);
 
         // when
-        Long result = libraryMemberService.createLibraryMember(createParam);
+        Long result = libraryMemberService.createLibraryMember(createMember);
 
         // then
         Assertions.assertThat(result).isEqualTo(libraryMemberId);
@@ -74,7 +73,7 @@ class LibraryMemberServiceTest {
         BDDMockito.given(libraryMemberRepository.findById(Mockito.anyLong())).willReturn(Optional.ofNullable(libraryMember));
 
         // when
-        LibraryMember result = libraryMemberService.findVerifiedLibraryMember(id);
+        LibraryMember result = libraryMemberService.getById(id);
 
         // then
         assertThat(result).isEqualTo(libraryMember);
@@ -87,6 +86,6 @@ class LibraryMemberServiceTest {
         given(libraryMemberRepository.findById(Mockito.anyLong())).willReturn(Optional.empty());
 
         // when // then
-        org.junit.jupiter.api.Assertions.assertThrows(BusinessLogicException.class, () -> libraryMemberService.findVerifiedLibraryMember(id));
+        org.junit.jupiter.api.Assertions.assertThrows(BusinessLogicException.class, () -> libraryMemberService.getById(id));
     }
 }

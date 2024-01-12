@@ -1,7 +1,7 @@
 package ksp7331.practice.libraryAPI.member.service;
 
-import ksp7331.practice.libraryAPI.member.entity.Member;
-import ksp7331.practice.libraryAPI.member.repository.MemberRepository;
+import ksp7331.practice.libraryAPI.member.domain.Member;
+import ksp7331.practice.libraryAPI.member.service.port.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberRepository memberRepository;
     public Member createMember(String name) {
-        Member member = Member.builder().name(name).build();
-        return memberRepository.save(member);
+        Member member = Member.from(name);
+        return memberRepository.create(member);
     }
 
     public void deleteMember(Member member) {

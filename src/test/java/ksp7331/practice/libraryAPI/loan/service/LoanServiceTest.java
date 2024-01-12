@@ -5,14 +5,14 @@ import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.book.service.LibraryBookService;
 import ksp7331.practice.libraryAPI.exception.BusinessLogicException;
 import ksp7331.practice.libraryAPI.exception.ExceptionCode;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.domain.Library;
 import ksp7331.practice.libraryAPI.loan.domain.Loan;
 import ksp7331.practice.libraryAPI.loan.domain.LoanBook;
 import ksp7331.practice.libraryAPI.loan.domain.LoanState;
 import ksp7331.practice.libraryAPI.loan.dto.CreateLoan;
 import ksp7331.practice.libraryAPI.loan.dto.ReturnBook;
 import ksp7331.practice.libraryAPI.loan.service.port.LoanRepository;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.domain.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,9 +57,9 @@ class LoanServiceTest {
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
         List<LibraryBook> libraryBooks = List.of(LibraryBook.builder().build());
 
-        Loan loan = Loan.builder().id(loanId).build();
+        Loan loan = Loan.builder().id(loanId).libraryMember(libraryMember).build();
 
-        BDDMockito.given(libraryMemberService.findVerifiedLibraryMember(libraryMemberId)).willReturn(libraryMember);
+        BDDMockito.given(libraryMemberService.getById(libraryMemberId)).willReturn(libraryMember);
         BDDMockito.given(loanRepository.findAllNotReturned(Mockito.anyLong())).willReturn(List.of());
         BDDMockito.given(libraryBookService.findExistBookInLibrary(libraryId, bookIds)).willReturn(libraryBooks);
         BDDMockito.given(loanRepository.create(Mockito.any(Loan.class))).willReturn(loan);
@@ -88,7 +88,7 @@ class LoanServiceTest {
         List<LibraryBook> libraryBooks = new ArrayList<>();
         IntStream.rangeClosed(1, bookIds.size()).forEach((i) -> libraryBooks.add(LibraryBook.builder().build()));
 
-        BDDMockito.given(libraryMemberService.findVerifiedLibraryMember(libraryMemberId)).willReturn(libraryMember);
+        BDDMockito.given(libraryMemberService.getById(libraryMemberId)).willReturn(libraryMember);
         BDDMockito.given(loanRepository.findAllNotReturned(Mockito.anyLong())).willReturn(List.of());
         BDDMockito.given(libraryBookService.findExistBookInLibrary(libraryId, bookIds)).willReturn(libraryBooks);
 
@@ -109,10 +109,10 @@ class LoanServiceTest {
 
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
 
-        Loan loan = Loan.builder().createdDate(LocalDateTime.now().minusDays(20)).build();
+        Loan loan = Loan.builder().libraryMember(libraryMember).createdDate(LocalDateTime.now().minusDays(20)).build();
 
 
-        BDDMockito.given(libraryMemberService.findVerifiedLibraryMember(libraryMemberId)).willReturn(libraryMember);
+        BDDMockito.given(libraryMemberService.getById(libraryMemberId)).willReturn(libraryMember);
         BDDMockito.given(loanRepository.findAllNotReturned(Mockito.anyLong())).willReturn(List.of(loan));
 
 
@@ -131,7 +131,7 @@ class LoanServiceTest {
         CreateLoan createLoan = CreateLoan.builder().libraryMemberId(libraryMemberId).build();
         LibraryMember libraryMember = LibraryMember.builder().id(libraryMemberId).library(Library.builder().id(libraryId).build()).build();
         libraryMember.setLoanAvailableDay(LocalDate.now().plusDays(3));
-        BDDMockito.given(libraryMemberService.findVerifiedLibraryMember(libraryMemberId)).willReturn(libraryMember);
+        BDDMockito.given(libraryMemberService.getById(libraryMemberId)).willReturn(libraryMember);
 
         // when // then
         BusinessLogicException exception = assertThrows(BusinessLogicException.class, () -> loanService.createLoan(createLoan));
@@ -163,7 +163,7 @@ class LoanServiceTest {
                 .loanBooks(List.of(loanBook))
                 .createdDate(LocalDateTime.now())
                 .build();
-        BDDMockito.given(loanRepository.findById(Mockito.anyLong())).willReturn(Optional.ofNullable(Loan.builder().build()));
+        BDDMockito.given(loanRepository.findById(loanId)).willReturn(Optional.ofNullable(loan));
         BDDMockito.given(loanRepository.update(Mockito.any(Loan.class))).willReturn(loan);
 
         // when

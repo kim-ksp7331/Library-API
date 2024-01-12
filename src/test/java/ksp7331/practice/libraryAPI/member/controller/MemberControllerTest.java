@@ -1,9 +1,7 @@
 package ksp7331.practice.libraryAPI.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ksp7331.practice.libraryAPI.member.dto.MemberControllerDTO;
-import ksp7331.practice.libraryAPI.member.dto.MemberServiceDTO;
-import ksp7331.practice.libraryAPI.member.mapper.MemberMapper;
+import ksp7331.practice.libraryAPI.member.dto.CreateMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
 import ksp7331.practice.libraryAPI.util.UriCreator;
 import org.junit.jupiter.api.Test;
@@ -16,14 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.headers.HeaderDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
-import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -48,8 +39,6 @@ class MemberControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private LibraryMemberService libraryMemberService;
-    @MockBean
-    private MemberMapper memberMapper;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -69,9 +58,7 @@ class MemberControllerTest {
 
         String content = objectMapper.writeValueAsString(post);
         Long id = 1L;
-        BDDMockito.given(memberMapper.postToCreateParam(Mockito.any(MemberControllerDTO.Post.class)))
-                .willReturn(MemberServiceDTO.CreateParam.builder().build());
-        BDDMockito.given(libraryMemberService.createLibraryMember(Mockito.any(MemberServiceDTO.CreateParam.class))).willReturn(id);
+        BDDMockito.given(libraryMemberService.createLibraryMember(Mockito.any(CreateMember.class))).willReturn(id);
         String url = "/members";
 
         // when

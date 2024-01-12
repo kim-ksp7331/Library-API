@@ -1,17 +1,15 @@
 package ksp7331.practice.libraryAPI.library.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ksp7331.practice.libraryAPI.config.DbTestConfig;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
-import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.LibraryJpaRepository;
 import ksp7331.practice.libraryAPI.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,7 +31,7 @@ public class LibraryIntegrationTest extends IntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private LibraryRepository libraryRepository;
+    private LibraryJpaRepository libraryRepository;
     @Autowired
     private DbTestInitializer dbTestInitializer;
     @Autowired

@@ -1,7 +1,7 @@
 package ksp7331.practice.libraryAPI.loan.infrastructure.entity;
 
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,7 +35,7 @@ public class Loan extends BaseTimeEntity {
     public static Loan from(ksp7331.practice.libraryAPI.loan.domain.Loan domain) {
         Loan loan = new Loan();
         loan.id = domain.getId();
-        loan.libraryMember = domain.getLibraryMember();
+        loan.libraryMember = LibraryMember.from(domain.getLibraryMember());
         loan.loanBooks = domain.getLoanBooks().stream().map(book -> LoanBook.from(book, loan)).collect(Collectors.toList());
         return loan;
     }
@@ -48,6 +48,9 @@ public class Loan extends BaseTimeEntity {
     }
 
     public ksp7331.practice.libraryAPI.loan.domain.Loan toDomain() {
+        return toDomainSub(libraryMember.toDomainSub());
+    }
+    public ksp7331.practice.libraryAPI.loan.domain.Loan toDomainSub(ksp7331.practice.libraryAPI.member.domain.LibraryMember libraryMember) {
         return ksp7331.practice.libraryAPI.loan.domain.Loan.builder()
                 .id(id)
                 .createdDate(getCreatedDate())

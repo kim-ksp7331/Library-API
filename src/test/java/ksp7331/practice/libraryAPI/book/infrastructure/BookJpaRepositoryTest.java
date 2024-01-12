@@ -3,7 +3,7 @@ package ksp7331.practice.libraryAPI.book.infrastructure;
 import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
 import ksp7331.practice.libraryAPI.config.DbTestConfig;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

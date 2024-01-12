@@ -44,13 +44,13 @@ public class Book extends BaseTimeEntity {
     }
 
     public ksp7331.practice.libraryAPI.book.domain.Book toDomain() {
-        ksp7331.practice.libraryAPI.book.domain.Book domain = toDomainInternal();
+        ksp7331.practice.libraryAPI.book.domain.Book domain = toDomainSub();
         libraryBooks.forEach(libraryBook -> {
-            libraryBook.toDomainInternal(domain);
+            libraryBook.toDomainSub(domain);
         });
         return domain;
     }
-    ksp7331.practice.libraryAPI.book.domain.Book toDomainInternal() {
+    ksp7331.practice.libraryAPI.book.domain.Book toDomainSub() {
         ksp7331.practice.libraryAPI.book.domain.Book domainBook = ksp7331.practice.libraryAPI.book.domain.Book.builder()
                 .id(id)
                 .name(name)

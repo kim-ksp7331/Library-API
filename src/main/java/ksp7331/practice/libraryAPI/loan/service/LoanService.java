@@ -8,7 +8,7 @@ import ksp7331.practice.libraryAPI.loan.domain.Loan;
 import ksp7331.practice.libraryAPI.loan.dto.CreateLoan;
 import ksp7331.practice.libraryAPI.loan.dto.ReturnBook;
 import ksp7331.practice.libraryAPI.loan.service.port.LoanRepository;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.domain.LibraryMember;
 import ksp7331.practice.libraryAPI.member.service.LibraryMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class LoanService {
     private final LibraryMemberService libraryMemberService;
     private final LibraryBookService libraryBookService;
     public Long createLoan(CreateLoan createLoan) {
-        LibraryMember libraryMember = libraryMemberService.findVerifiedLibraryMember(createLoan.getLibraryMemberId());
+        LibraryMember libraryMember = libraryMemberService.getById(createLoan.getLibraryMemberId());
         checkLoanable(libraryMember);
 
         List<LibraryBook> libraryBooks = libraryBookService.findExistBookInLibrary(libraryMember.getLibrary().getId(), createLoan.getBookIds());

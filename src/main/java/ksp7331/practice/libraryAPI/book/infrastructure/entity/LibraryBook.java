@@ -2,7 +2,7 @@ package ksp7331.practice.libraryAPI.book.infrastructure.entity;
 
 import ksp7331.practice.libraryAPI.book.domain.BookState;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,21 +37,21 @@ public class LibraryBook extends BaseTimeEntity {
         LibraryBook libraryBook = new LibraryBook();
         libraryBook.id = domain.getId();
         libraryBook.book = Book.from(domain.getBook());
-        libraryBook.library = domain.getLibrary();
+        libraryBook.library = Library.from(domain.getLibrary());
         if(domain.getState() != null) libraryBook.state = domain.getState();
         return libraryBook;
     }
 
     public ksp7331.practice.libraryAPI.book.domain.LibraryBook toDomain() {
-        ksp7331.practice.libraryAPI.book.domain.Book domainBook = book.toDomainInternal();
-        ksp7331.practice.libraryAPI.book.domain.LibraryBook domainLibraryBook = toDomainInternal(domainBook);
+        ksp7331.practice.libraryAPI.book.domain.Book domainBook = book.toDomainSub();
+        ksp7331.practice.libraryAPI.book.domain.LibraryBook domainLibraryBook = toDomainSub(domainBook);
         return domainLibraryBook;
     }
-    ksp7331.practice.libraryAPI.book.domain.LibraryBook toDomainInternal(ksp7331.practice.libraryAPI.book.domain.Book domainBook) {
+    ksp7331.practice.libraryAPI.book.domain.LibraryBook toDomainSub(ksp7331.practice.libraryAPI.book.domain.Book domainBook) {
         ksp7331.practice.libraryAPI.book.domain.LibraryBook domainLibraryBook = ksp7331.practice.libraryAPI.book.domain.LibraryBook.builder()
                 .id(id)
                 .book(domainBook)
-                .library(library)
+                .library(library.toDomain())
                 .state(state)
                 .build();
         domainBook.addLibraryBook(domainLibraryBook);

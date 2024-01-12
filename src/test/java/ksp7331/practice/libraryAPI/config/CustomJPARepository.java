@@ -2,12 +2,12 @@ package ksp7331.practice.libraryAPI.config;
 
 import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
 import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
 import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
 import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanBook;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
-import ksp7331.practice.libraryAPI.member.entity.Member;
-import ksp7331.practice.libraryAPI.member.entity.Phone;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.Member;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.Phone;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

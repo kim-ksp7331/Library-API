@@ -2,13 +2,9 @@ package ksp7331.practice.libraryAPI.member.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
-import ksp7331.practice.libraryAPI.library.entity.Library;
-import ksp7331.practice.libraryAPI.library.repository.LibraryRepository;
 import ksp7331.practice.libraryAPI.IntegrationTest;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
-import ksp7331.practice.libraryAPI.member.entity.Member;
-import ksp7331.practice.libraryAPI.member.repository.LibraryMemberRepository;
-import ksp7331.practice.libraryAPI.member.repository.MemberRepository;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.infrastructure.LibraryMemberJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +32,7 @@ public class MemberIntegrationTest extends IntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private LibraryMemberRepository libraryMemberRepository;
+    private LibraryMemberJpaRepository libraryMemberRepository;
     @Autowired
     private DbTestInitializer dbTestInitializer;
     @Autowired

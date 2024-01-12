@@ -3,8 +3,10 @@ package ksp7331.practice.libraryAPI.loan.infrastructure.entity;
 import ksp7331.practice.libraryAPI.book.domain.BookState;
 import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
 import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
 import ksp7331.practice.libraryAPI.loan.domain.LoanState;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.Member;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -17,10 +19,18 @@ class LoanTest {
     @Test
     void from() {
         // given
-        LibraryMember libraryMember = LibraryMember.builder().id(3L).build();
+        ksp7331.practice.libraryAPI.library.domain.Library library = ksp7331.practice.libraryAPI.library.domain.Library.builder().build();
+        ksp7331.practice.libraryAPI.member.domain.LibraryMember libraryMember = ksp7331.practice.libraryAPI.member.domain.LibraryMember.builder()
+                .id(3L)
+                .library(library)
+                .member(ksp7331.practice.libraryAPI.member.domain.Member.builder().id(1L).name("kim").build())
+                .build();
         LocalDateTime returnDate = LocalDateTime.now().minusDays(2);
         ksp7331.practice.libraryAPI.book.domain.LibraryBook libraryBook = ksp7331.practice.libraryAPI.book.domain.LibraryBook.builder()
-                .id(1L).state(BookState.LOANABLE).book(ksp7331.practice.libraryAPI.book.domain.Book.builder().id(1L).build()).build();
+                .id(1L).state(BookState.LOANABLE)
+                .library(library)
+                .book(ksp7331.practice.libraryAPI.book.domain.Book.builder().id(1L).build())
+                .build();
         List<ksp7331.practice.libraryAPI.loan.domain.LoanBook> loanBooks = List.of(
                 ksp7331.practice.libraryAPI.loan.domain.LoanBook.builder()
                         .id(2L)
@@ -50,9 +60,14 @@ class LoanTest {
     @Test
     void update() {
         // given
-        LibraryMember libraryMember = LibraryMember.builder().id(3L).build();
+        Library library = Library.builder().id(1L).build();
+        Member member = Member.builder().id(1L).build();
+        LibraryMember libraryMember = LibraryMember.builder().id(3L).member(member).library(library).build();
         ksp7331.practice.libraryAPI.book.domain.LibraryBook libraryBook = ksp7331.practice.libraryAPI.book.domain.LibraryBook
-                .builder().id(1L).state(BookState.NOT_LOANABLE).book(ksp7331.practice.libraryAPI.book.domain.Book.builder().id(1L).build()).build();
+                .builder().id(1L).state(BookState.NOT_LOANABLE)
+                .library(library.toDomain())
+                .book(ksp7331.practice.libraryAPI.book.domain.Book.builder().id(1L).build())
+                .build();
         List<LoanBook> loanBooks = List.of(
                 LoanBook.builder()
                         .id(1L)
@@ -82,7 +97,7 @@ class LoanTest {
 
         ksp7331.practice.libraryAPI.loan.domain.Loan updatedDomain = ksp7331.practice.libraryAPI.loan.domain.Loan.builder()
                 .id(1L)
-                .libraryMember(libraryMember)
+                .libraryMember(libraryMember.toDomain())
                 .loanBooks(updatedLoanBooks)
                 .build();
 
@@ -101,9 +116,13 @@ class LoanTest {
     @Test
     void toDomain() {
         // given
-        LibraryMember libraryMember = LibraryMember.builder().id(3L).build();
+        Library library = Library.builder().id(1L).build();
+        LibraryMember libraryMember = LibraryMember.builder()
+                .member(Member.builder().id(1L).build()).id(3L)
+                .library(library)
+                .build();
         LocalDateTime returnDate = LocalDateTime.now().minusDays(2);
-        LibraryBook libraryBook = LibraryBook.builder().book(Book.builder().id(1L).build()).build();
+        LibraryBook libraryBook = LibraryBook.builder().library(library).book(Book.builder().id(1L).build()).build();
         List<LoanBook> loanBooks = List.of(
                 LoanBook.builder()
                         .id(2L)

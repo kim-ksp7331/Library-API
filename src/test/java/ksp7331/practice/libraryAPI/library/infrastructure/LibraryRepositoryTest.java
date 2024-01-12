@@ -1,7 +1,7 @@
-package ksp7331.practice.libraryAPI.library.repository;
+package ksp7331.practice.libraryAPI.library.infrastructure;
 
 import ksp7331.practice.libraryAPI.config.DbTestConfig;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 @Import(DbTestConfig.class)
 class LibraryRepositoryTest {
     @Autowired
-    private LibraryRepository libraryRepository;
+    private LibraryJpaRepository libraryRepository;
     @Test
     void saveTest() {
         // given

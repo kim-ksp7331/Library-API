@@ -2,7 +2,7 @@ package ksp7331.practice.libraryAPI.book.service;
 
 import ksp7331.practice.libraryAPI.book.domain.Book;
 import ksp7331.practice.libraryAPI.book.service.port.LibraryBookRepository;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.domain.Library;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class LibraryBookServiceTest {
         long libraryId = 1L;
         Book book = Book.builder().id(bookId).build();
 
-        BDDMockito.given(libraryService.findVerifiedLibrary(Mockito.anyLong()))
+        BDDMockito.given(libraryService.getById(Mockito.anyLong()))
                 .willReturn(Library.builder().id(libraryId).build());
 
         // when // then

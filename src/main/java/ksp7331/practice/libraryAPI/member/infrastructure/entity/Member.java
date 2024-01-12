@@ -1,4 +1,4 @@
-package ksp7331.practice.libraryAPI.member.entity;
+package ksp7331.practice.libraryAPI.member.infrastructure.entity;
 
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
 import lombok.*;
@@ -22,10 +22,24 @@ public class Member extends BaseTimeEntity {
         this.id = id;
         this.name = name;
     }
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE})
     private List<LibraryMember> libraryMembers = new ArrayList<>();
 
     void addLibraryMember(LibraryMember libraryMember) {
         libraryMembers.add(libraryMember);
+    }
+
+    public static Member from(ksp7331.practice.libraryAPI.member.domain.Member domain) {
+        Member member = new Member();
+        member.id = domain.getId();
+        member.name = domain.getName();
+        return member;
+    }
+
+    public ksp7331.practice.libraryAPI.member.domain.Member toDomain() {
+        return ksp7331.practice.libraryAPI.member.domain.Member.builder()
+                .id(id)
+                .name(name)
+                .build();
     }
 }

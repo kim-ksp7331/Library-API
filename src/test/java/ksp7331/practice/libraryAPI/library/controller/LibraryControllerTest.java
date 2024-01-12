@@ -1,8 +1,8 @@
 package ksp7331.practice.libraryAPI.library.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
-import ksp7331.practice.libraryAPI.library.mapper.LibraryMapper;
+import ksp7331.practice.libraryAPI.library.domain.Library;
+import ksp7331.practice.libraryAPI.library.dto.LibraryCreate;
 import ksp7331.practice.libraryAPI.library.service.LibraryService;
 import ksp7331.practice.libraryAPI.util.UriCreator;
 import org.junit.jupiter.api.Test;
@@ -15,12 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.headers.HeaderDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -45,8 +40,6 @@ class LibraryControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private LibraryService libraryService;
-    @MockBean
-    private LibraryMapper libraryMapper;
     @Autowired
     private ObjectMapper objectMapper;
     @Test
@@ -56,7 +49,7 @@ class LibraryControllerTest {
         Map<String, String> post = Map.of("name", name);
         String content = objectMapper.writeValueAsString(post);
         long id = 1L;
-        BDDMockito.given(libraryService.createLibrary(Mockito.anyString())).willReturn(id);
+        BDDMockito.given(libraryService.createLibrary(Mockito.any(LibraryCreate.class))).willReturn(id);
         String url = "/libraries";
 
         // when
@@ -83,13 +76,12 @@ class LibraryControllerTest {
         //given
         int repeat = 3;
         String libName = "newLib";
-        List<LibraryControllerDTO.Response> libraries = LongStream.rangeClosed(1, repeat).mapToObj(i -> LibraryControllerDTO.Response.builder()
+        List<Library> libraries = LongStream.rangeClosed(1, repeat).mapToObj(i -> Library.builder()
                 .id(i)
                 .name(libName + i)
                 .build()).collect(Collectors.toList());
 
-        BDDMockito.given(libraryService.findLibraries()).willReturn(List.of());
-        BDDMockito.given(libraryMapper.ServiceDTOsToControllerDTOs(Mockito.anyList())).willReturn(libraries);
+        BDDMockito.given(libraryService.findLibraries()).willReturn(libraries);
         String url = "/libraries";
 
         // when

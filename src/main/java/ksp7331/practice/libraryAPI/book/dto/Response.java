@@ -1,8 +1,7 @@
 package ksp7331.practice.libraryAPI.book.dto;
 
 import ksp7331.practice.libraryAPI.book.domain.Book;
-import ksp7331.practice.libraryAPI.library.dto.LibraryControllerDTO;
-import ksp7331.practice.libraryAPI.library.entity.Library;
+import ksp7331.practice.libraryAPI.library.domain.Library;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +17,7 @@ public class Response {
     private String name;
     private String author;
     private String publisher;
-    private List<LibraryControllerDTO.Response> libraries;
+    private List<ksp7331.practice.libraryAPI.library.dto.Response> libraries;
 
     public static Response from(Book book) {
         return Response.builder()
@@ -28,7 +27,7 @@ public class Response {
                 .publisher(book.getPublisher())
                 .libraries(book.getLibraryBooks().stream().map(libraryBook -> {
                     Library library = libraryBook.getLibrary();
-                    return LibraryControllerDTO.Response.builder()
+                    return ksp7331.practice.libraryAPI.library.dto.Response.builder()
                             .id(library.getId())
                             .name(library.getName())
                             .build();

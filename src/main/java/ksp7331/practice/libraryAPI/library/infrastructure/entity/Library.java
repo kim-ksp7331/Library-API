@@ -1,8 +1,8 @@
-package ksp7331.practice.libraryAPI.library.entity;
+package ksp7331.practice.libraryAPI.library.infrastructure.entity;
 
 import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
-import ksp7331.practice.libraryAPI.member.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,5 +30,19 @@ public class Library extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "library")
     private List<LibraryBook> libraryBooks = new ArrayList<>();
+
+    public static Library from(ksp7331.practice.libraryAPI.library.domain.Library domain) {
+        Library library = new Library();
+        library.id = domain.getId();
+        library.name = domain.getName();
+        return library;
+    }
+
+    public ksp7331.practice.libraryAPI.library.domain.Library toDomain() {
+        return ksp7331.practice.libraryAPI.library.domain.Library.builder()
+                .id(id)
+                .name(name)
+                .build();
+    }
 
 }
