@@ -2,7 +2,7 @@ package ksp7331.practice.libraryAPI.library.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
-import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.LibraryEntity;
 import ksp7331.practice.libraryAPI.library.infrastructure.LibraryJpaRepository;
 import ksp7331.practice.libraryAPI.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -56,7 +56,7 @@ public class LibraryIntegrationTest extends IntegrationTest {
                 .andExpect(header().string("location", is(startsWith(url))));
 
         long id = getId(url, actions);
-        Library library = libraryRepository.findById(id).get();
+        LibraryEntity library = libraryRepository.findById(id).get();
         assertThat(library).isNotNull();
         assertThat(library.getName()).isEqualTo(name);
     }
@@ -65,7 +65,7 @@ public class LibraryIntegrationTest extends IntegrationTest {
     void getLibraries() throws Exception {
         //given
         String url = "/libraries";
-        List<Library> libraries = dbTestInitializer.getLibraries();
+        List<LibraryEntity> libraries = dbTestInitializer.getLibraries();
 
         // when
         ResultActions actions = mockMvc.perform(

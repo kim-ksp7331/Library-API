@@ -2,9 +2,9 @@ package ksp7331.practice.libraryAPI.book.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.IntegrationTest;
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.BookEntity;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
-import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.LibraryEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,8 +92,8 @@ public class BookIntegrationTest extends IntegrationTest {
     void getBook() throws Exception {
         // given
         Long bookId = 1L;
-        Book book = dbTestInitializer.getBooks().get(0);
-        List<Library> libraries = dbTestInitializer.getLibraries();
+        BookEntity book = dbTestInitializer.getBooks().get(0);
+        List<LibraryEntity> libraries = dbTestInitializer.getLibraries();
 
 
         String urlTemplate = "/books/{book-id}";

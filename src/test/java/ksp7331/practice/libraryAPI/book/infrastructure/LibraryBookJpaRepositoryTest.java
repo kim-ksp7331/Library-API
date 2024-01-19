@@ -1,6 +1,6 @@
 package ksp7331.practice.libraryAPI.book.infrastructure;
 
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBookEntity;
 import ksp7331.practice.libraryAPI.config.DbTestConfig;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import org.assertj.core.api.Assertions;
@@ -25,7 +25,7 @@ public class LibraryBookJpaRepositoryTest {
         List<Long> bookIds = List.of(1L, 2L, 3L, 5L);
 
         // when
-        List<LibraryBook> libraryBooks = libraryBookJpaRepository.findByLibraryIdAndBookIds(libraryId, bookIds);
+        List<LibraryBookEntity> libraryBooks = libraryBookJpaRepository.findByLibraryIdAndBookIds(libraryId, bookIds);
 
         // then
         Assertions.assertThat(libraryBooks).hasSize(2);

@@ -3,7 +3,7 @@ package ksp7331.practice.libraryAPI.member.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.IntegrationTest;
-import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMemberEntity;
 import ksp7331.practice.libraryAPI.member.infrastructure.LibraryMemberJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ public class MemberIntegrationTest extends IntegrationTest {
                 .andExpect(header().string("location", is(startsWith(url))));
 
         long id = getId(url, actions);
-        LibraryMember libraryMember = libraryMemberRepository.findById(id).get();
+        LibraryMemberEntity libraryMember = libraryMemberRepository.findById(id).get();
         assertThat(libraryMember).isNotNull();
         assertThat(libraryMember.getMember().getName()).isEqualTo(name);
         assertThat(libraryMember.getPhones()).anyMatch(phone -> phone.getNumber().equals(phoneNumber));
@@ -96,7 +96,7 @@ public class MemberIntegrationTest extends IntegrationTest {
                 .andExpect(header().string("location", is(startsWith(url))));
 
         long id = getId(url, actions);
-        LibraryMember findLibraryMember = libraryMemberRepository.findById(id).get();
+        LibraryMemberEntity findLibraryMember = libraryMemberRepository.findById(id).get();
         assertThat(findLibraryMember).isNotNull();
         assertThat(findLibraryMember.getMember().getName()).isEqualTo(dbTestInitializer.getMembers().get(0).getName());
         assertThat(findLibraryMember.getPhones()).anyMatch(phone -> phone.getNumber().equals(phoneNumber));

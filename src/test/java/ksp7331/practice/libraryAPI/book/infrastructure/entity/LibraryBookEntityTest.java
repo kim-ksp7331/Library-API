@@ -1,21 +1,24 @@
 package ksp7331.practice.libraryAPI.book.infrastructure.entity;
 
+import ksp7331.practice.libraryAPI.book.domain.Book;
 import ksp7331.practice.libraryAPI.book.domain.BookState;
-import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
+import ksp7331.practice.libraryAPI.library.domain.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.LibraryEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-class LibraryBookTest {
+class LibraryBookEntityTest {
 
     @Test
     void from() {
         // given
-        ksp7331.practice.libraryAPI.book.domain.LibraryBook domain = ksp7331.practice.libraryAPI.book.domain.LibraryBook.builder()
+        LibraryBook domain = LibraryBook.builder()
                 .id(1L)
                 .state(BookState.NOT_LOANABLE)
-                .library(ksp7331.practice.libraryAPI.library.domain.Library.builder().id(3L).build())
-                .book(ksp7331.practice.libraryAPI.book.domain.Book.builder()
+                .library(Library.builder().id(3L).build())
+                .book(Book.builder()
                         .id(2L)
                         .name("book1")
                         .author("author1")
@@ -24,7 +27,7 @@ class LibraryBookTest {
                 .build();
 
         // when
-        LibraryBook libraryBook = LibraryBook.from(domain);
+        LibraryBookEntity libraryBook = LibraryBookEntity.from(domain);
 
         // then
         assertThat(libraryBook.getId()).isEqualTo(1L);
@@ -39,17 +42,17 @@ class LibraryBookTest {
     @Test
     void toDomain() {
         // given
-        Book book = Book.builder()
+        BookEntity book = BookEntity.builder()
                 .id(2L)
                 .name("book1")
                 .author("author1")
                 .publisher("publisher1")
                 .build();
-        LibraryBook libraryBook = LibraryBook.builder().book(book).id(1L).state(BookState.NOT_LOANABLE)
-                .library(Library.builder().id(3L).build()).build();
+        LibraryBookEntity libraryBook = LibraryBookEntity.builder().book(book).id(1L).state(BookState.NOT_LOANABLE)
+                .library(LibraryEntity.builder().id(3L).build()).build();
 
         // when
-        ksp7331.practice.libraryAPI.book.domain.LibraryBook domain = libraryBook.toDomain();
+        LibraryBook domain = libraryBook.toDomain();
 
         // then
         assertThat(domain.getId()).isEqualTo(1L);
@@ -64,16 +67,16 @@ class LibraryBookTest {
     @Test
     void update() {
         // given
-        Book book = Book.builder()
+        BookEntity book = BookEntity.builder()
                 .id(2L)
                 .name("book1")
                 .author("author1")
                 .publisher("publisher1")
                 .build();
-        LibraryBook libraryBook = LibraryBook.builder().book(book).id(1L).state(BookState.NOT_LOANABLE)
-                .library(Library.builder().id(3L).build()).build();
+        LibraryBookEntity libraryBook = LibraryBookEntity.builder().book(book).id(1L).state(BookState.NOT_LOANABLE)
+                .library(LibraryEntity.builder().id(3L).build()).build();
 
-        ksp7331.practice.libraryAPI.book.domain.LibraryBook updatedDomain = ksp7331.practice.libraryAPI.book.domain.LibraryBook.builder()
+        LibraryBook updatedDomain = LibraryBook.builder()
                 .state(BookState.LOANABLE)
                 .build();
 

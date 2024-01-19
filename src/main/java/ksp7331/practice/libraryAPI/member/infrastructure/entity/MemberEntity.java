@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.member.infrastructure.entity;
 
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
+import ksp7331.practice.libraryAPI.member.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,9 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "MEMBER")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseTimeEntity {
+public class MemberEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,26 +20,26 @@ public class Member extends BaseTimeEntity {
     private String name;
 
     @Builder
-    public Member(Long id, String name) {
+    public MemberEntity(Long id, String name) {
         this.id = id;
         this.name = name;
     }
     @OneToMany(mappedBy = "member", cascade = {CascadeType.REMOVE})
-    private List<LibraryMember> libraryMembers = new ArrayList<>();
+    private List<LibraryMemberEntity> libraryMembers = new ArrayList<>();
 
-    void addLibraryMember(LibraryMember libraryMember) {
+    void addLibraryMember(LibraryMemberEntity libraryMember) {
         libraryMembers.add(libraryMember);
     }
 
-    public static Member from(ksp7331.practice.libraryAPI.member.domain.Member domain) {
-        Member member = new Member();
+    public static MemberEntity from(Member domain) {
+        MemberEntity member = new MemberEntity();
         member.id = domain.getId();
         member.name = domain.getName();
         return member;
     }
 
-    public ksp7331.practice.libraryAPI.member.domain.Member toDomain() {
-        return ksp7331.practice.libraryAPI.member.domain.Member.builder()
+    public Member toDomain() {
+        return Member.builder()
                 .id(id)
                 .name(name)
                 .build();

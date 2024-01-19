@@ -1,30 +1,30 @@
 package ksp7331.practice.libraryAPI.config;
 
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
-import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
-import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
-import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanBook;
-import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
-import ksp7331.practice.libraryAPI.member.infrastructure.entity.Member;
-import ksp7331.practice.libraryAPI.member.infrastructure.entity.Phone;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.BookEntity;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBookEntity;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.LibraryEntity;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanEntity;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanBookEntity;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMemberEntity;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.MemberEntity;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.PhoneEntity;
 
 import java.util.List;
 
 public interface TestRepository {
-    void saveBooks(List<Book> books);
+    void saveBooks(List<BookEntity> books);
 
-    void saveLibraries(List<Library> libraries);
+    void saveLibraries(List<LibraryEntity> libraries);
 
-    void saveLibraryBooks(List<LibraryBook> libraryBooks);
+    void saveLibraryBooks(List<LibraryBookEntity> libraryBooks);
 
-    void saveMembers(List<Member> members);
+    void saveMembers(List<MemberEntity> members);
 
-    void saveLibraryMembers(List<LibraryMember> libraryMembers);
+    void saveLibraryMembers(List<LibraryMemberEntity> libraryMembers);
 
-    void savePhones(List<Phone> phones);
+    void savePhones(List<PhoneEntity> phones);
 
-    void saveLoans(List<Loan> loans);
+    void saveLoans(List<LoanEntity> loans);
 
-    void saveLoanBooks(List<LoanBook> loanBooks);
+    void saveLoanBooks(List<LoanBookEntity> loanBooks);
 }

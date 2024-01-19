@@ -1,54 +1,57 @@
 package ksp7331.practice.libraryAPI.book.infrastructure.entity;
 
+import ksp7331.practice.libraryAPI.book.domain.Book;
 import ksp7331.practice.libraryAPI.book.domain.BookState;
+import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
-import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.LibraryEntity;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Optional;
 
 @Entity
+@Table(name = "LIBRARY_BOOK")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LibraryBook extends BaseTimeEntity {
+public class LibraryBookEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "BOOK_ID")
-    private Book book;
+    private BookEntity book;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "LIBRARY_ID")
-    private Library library;
+    private LibraryEntity library;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Setter
     private BookState state = BookState.LOANABLE;
 
     @Builder
-    public LibraryBook(Long id, Book book, Library library, BookState state) {
+    public LibraryBookEntity(Long id, BookEntity book, LibraryEntity library, BookState state) {
         this.id = id;
         this.book = book;
         this.library = library;
         if(state != null) this.state = state;
     }
-    public static LibraryBook from(ksp7331.practice.libraryAPI.book.domain.LibraryBook domain) {
-        LibraryBook libraryBook = new LibraryBook();
+    public static LibraryBookEntity from(LibraryBook domain) {
+        LibraryBookEntity libraryBook = new LibraryBookEntity();
         libraryBook.id = domain.getId();
-        libraryBook.book = Book.from(domain.getBook());
-        libraryBook.library = Library.from(domain.getLibrary());
+        libraryBook.book = BookEntity.from(domain.getBook());
+        libraryBook.library = LibraryEntity.from(domain.getLibrary());
         if(domain.getState() != null) libraryBook.state = domain.getState();
         return libraryBook;
     }
 
-    public ksp7331.practice.libraryAPI.book.domain.LibraryBook toDomain() {
-        ksp7331.practice.libraryAPI.book.domain.Book domainBook = book.toDomainSub();
-        ksp7331.practice.libraryAPI.book.domain.LibraryBook domainLibraryBook = toDomainSub(domainBook);
+    public LibraryBook toDomain() {
+        Book domainBook = book.toDomainSub();
+        LibraryBook domainLibraryBook = toDomainSub(domainBook);
         return domainLibraryBook;
     }
-    ksp7331.practice.libraryAPI.book.domain.LibraryBook toDomainSub(ksp7331.practice.libraryAPI.book.domain.Book domainBook) {
-        ksp7331.practice.libraryAPI.book.domain.LibraryBook domainLibraryBook = ksp7331.practice.libraryAPI.book.domain.LibraryBook.builder()
+    LibraryBook toDomainSub(Book domainBook) {
+        LibraryBook domainLibraryBook = LibraryBook.builder()
                 .id(id)
                 .book(domainBook)
                 .library(library.toDomain())
@@ -58,7 +61,7 @@ public class LibraryBook extends BaseTimeEntity {
         return domainLibraryBook;
     }
 
-    public void update(ksp7331.practice.libraryAPI.book.domain.LibraryBook libraryBook) {
+    public void update(LibraryBook libraryBook) {
         if(libraryBook == null) return;
         Optional.ofNullable(libraryBook.getState()).ifPresent(state -> this.state = state);
     }

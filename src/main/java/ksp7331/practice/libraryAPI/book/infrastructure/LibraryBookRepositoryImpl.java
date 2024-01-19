@@ -1,6 +1,7 @@
 package ksp7331.practice.libraryAPI.book.infrastructure;
 
 import ksp7331.practice.libraryAPI.book.domain.LibraryBook;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBookEntity;
 import ksp7331.practice.libraryAPI.book.service.port.LibraryBookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -15,12 +16,12 @@ public class LibraryBookRepositoryImpl implements LibraryBookRepository {
     private final BookJpaRepository bookJpaRepository;
     @Override
     public LibraryBook create(LibraryBook libraryBook) {
-        return libraryBookJpaRepository.save(ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook.from(libraryBook)).toDomain();
+        return libraryBookJpaRepository.save(LibraryBookEntity.from(libraryBook)).toDomain();
     }
 
     @Override
     public List<LibraryBook> findByLibraryIdAndBookIds(Long libraryId, List<Long> bookIds) {
         return libraryBookJpaRepository.findByLibraryIdAndBookIds(libraryId, bookIds).stream()
-                .map(ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook::toDomain).collect(Collectors.toList());
+                .map(LibraryBookEntity::toDomain).collect(Collectors.toList());
     }
 }

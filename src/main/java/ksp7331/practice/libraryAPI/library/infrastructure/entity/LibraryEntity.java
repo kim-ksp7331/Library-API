@@ -1,8 +1,9 @@
 package ksp7331.practice.libraryAPI.library.infrastructure.entity;
 
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBookEntity;
 import ksp7331.practice.libraryAPI.common.entity.BaseTimeEntity;
-import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
+import ksp7331.practice.libraryAPI.library.domain.Library;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMemberEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "LIBRARY")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Library extends BaseTimeEntity {
+public class LibraryEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,26 +22,26 @@ public class Library extends BaseTimeEntity {
     private String name;
 
     @Builder
-    public Library(Long id, String name) {
+    public LibraryEntity(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
     @OneToMany(mappedBy = "library")
-    private List<LibraryMember> libraryMembers = new ArrayList<>();
+    private List<LibraryMemberEntity> libraryMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "library")
-    private List<LibraryBook> libraryBooks = new ArrayList<>();
+    private List<LibraryBookEntity> libraryBooks = new ArrayList<>();
 
-    public static Library from(ksp7331.practice.libraryAPI.library.domain.Library domain) {
-        Library library = new Library();
+    public static LibraryEntity from(Library domain) {
+        LibraryEntity library = new LibraryEntity();
         library.id = domain.getId();
         library.name = domain.getName();
         return library;
     }
 
-    public ksp7331.practice.libraryAPI.library.domain.Library toDomain() {
-        return ksp7331.practice.libraryAPI.library.domain.Library.builder()
+    public Library toDomain() {
+        return Library.builder()
                 .id(id)
                 .name(name)
                 .build();

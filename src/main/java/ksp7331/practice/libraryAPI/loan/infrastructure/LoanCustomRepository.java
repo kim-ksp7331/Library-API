@@ -1,15 +1,15 @@
 package ksp7331.practice.libraryAPI.loan.infrastructure;
 
-import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface LoanCustomRepository {
-    Optional<Loan> findByIdFetchJoin(Long id);
+    Optional<LoanEntity> findByIdFetchJoin(Long id);
 
 
-    List<Loan> findAllNotReturned(Long libraryMemberId);
+    List<LoanEntity> findAllNotReturned(Long libraryMemberId);
 
-    List<Loan> findByLibraryMemberIdAndMonth(Long libraryMemberId, int year, int month);
+    List<LoanEntity> findByLibraryMemberIdAndMonth(Long libraryMemberId, int year, int month);
 }

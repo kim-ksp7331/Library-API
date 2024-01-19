@@ -2,7 +2,7 @@ package ksp7331.practice.libraryAPI.loan.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ksp7331.practice.libraryAPI.IntegrationTest;
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.BookEntity;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
 import ksp7331.practice.libraryAPI.loan.domain.LoanState;
 import ksp7331.practice.libraryAPI.loan.dto.CreateLoan;
@@ -143,8 +143,8 @@ public class LoanIntegrationTest extends IntegrationTest {
         long libraryMemberId = 2L;
         String memberName = dbTestInitializer.getMembers().get(0).getName();
         String libraryName = dbTestInitializer.getLibraries().get(1).getName();
-        Book book1 = dbTestInitializer.getBooks().get(0);
-        Book book2 = dbTestInitializer.getBooks().get(1);
+        BookEntity book1 = dbTestInitializer.getBooks().get(0);
+        BookEntity book2 = dbTestInitializer.getBooks().get(1);
 
 
 

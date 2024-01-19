@@ -1,16 +1,17 @@
 package ksp7331.practice.libraryAPI.book.infrastructure.entity;
 
-import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
+import ksp7331.practice.libraryAPI.book.domain.Book;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.LibraryEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-class BookTest {
+class BookEntityTest {
 
     @Test
     void from() {
         // given
-        ksp7331.practice.libraryAPI.book.domain.Book domain = ksp7331.practice.libraryAPI.book.domain.Book.builder()
+        Book domain = Book.builder()
                 .id(1L)
                 .name("book1")
                 .author("author1")
@@ -18,7 +19,7 @@ class BookTest {
                 .build();
 
         // when
-        Book result = Book.from(domain);
+        BookEntity result = BookEntity.from(domain);
 
         // then
         assertThat(result.getId()).isEqualTo(1L);
@@ -30,17 +31,17 @@ class BookTest {
     @Test
     void toDomain() {
         // given
-        Book book = Book.builder()
+        BookEntity book = BookEntity.builder()
                 .id(1L)
                 .name("book1")
                 .author("author1")
                 .publisher("publisher1")
                 .build();
-        LibraryBook libraryBook = LibraryBook.builder().id(1L).book(book).library(Library.builder().build()).build();
+        LibraryBookEntity libraryBook = LibraryBookEntity.builder().id(1L).book(book).library(LibraryEntity.builder().build()).build();
         book.addLibraryBook(libraryBook);
 
         // when
-        ksp7331.practice.libraryAPI.book.domain.Book domain = book.toDomain();
+        Book domain = book.toDomain();
 
         // then
         assertThat(domain.getId()).isEqualTo(1L);

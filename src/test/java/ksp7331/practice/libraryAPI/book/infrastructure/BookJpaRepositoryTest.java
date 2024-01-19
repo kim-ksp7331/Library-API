@@ -1,9 +1,9 @@
 package ksp7331.practice.libraryAPI.book.infrastructure;
 
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.BookEntity;
 import ksp7331.practice.libraryAPI.config.DbTestConfig;
 import ksp7331.practice.libraryAPI.config.DbTestInitializer;
-import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.LibraryEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -31,15 +31,15 @@ class BookJpaRepositoryTest {
     void findByIdFetchJoin() {
         // given
         long bookId = 1L;
-        Book expected = dbTestInitializer.getBooks().get(0);
-        List<Library> libraries = dbTestInitializer.getLibraries();
+        BookEntity expected = dbTestInitializer.getBooks().get(0);
+        List<LibraryEntity> libraries = dbTestInitializer.getLibraries();
 
         // when
-        Optional<Book> optionalBook = bookRepobookJpaRepository.findByIdFetchJoin(bookId);
+        Optional<BookEntity> optionalBook = bookRepobookJpaRepository.findByIdFetchJoin(bookId);
 
         // then
         assertThat(optionalBook.isPresent()).isTrue();
-        Book result = optionalBook.get();
+        BookEntity result = optionalBook.get();
         assertThat(result.getName()).isEqualTo(expected.getName());
         assertThat(result.getAuthor()).isEqualTo(expected.getAuthor());
         assertThat(result.getPublisher()).isEqualTo(expected.getPublisher());
@@ -48,7 +48,7 @@ class BookJpaRepositoryTest {
         }
     }
 
-    private void assertLibrary(Book result, int index, String libraryName) {
+    private void assertLibrary(BookEntity result, int index, String libraryName) {
         assertThat(result.getLibraryBooks().get(index).getLibrary().getName()).isEqualTo(libraryName);
     }
 
@@ -61,10 +61,10 @@ class BookJpaRepositoryTest {
                 .stream().map(b -> b.getName()).sorted().limit(size).toArray(String[]::new);
 
         // when
-        Page<Book> bookPage = bookRepobookJpaRepository.findAllPagination(pageable);
+        Page<BookEntity> bookPage = bookRepobookJpaRepository.findAllPagination(pageable);
 
         // then
         assertThat(bookPage).hasSize(size);
-        assertThat(bookPage).extracting(Book::getName).containsExactly(bookNames);
+        assertThat(bookPage).extracting(BookEntity::getName).containsExactly(bookNames);
     }
 }

@@ -1,9 +1,9 @@
 package ksp7331.practice.libraryAPI.book.infrastructure;
 
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBookEntity;
 
 import java.util.List;
 
 public interface LibraryBookCustomRepository {
-    List<LibraryBook> findByLibraryIdAndBookIds(Long libraryId, List<Long> bookIds);
+    List<LibraryBookEntity> findByLibraryIdAndBookIds(Long libraryId, List<Long> bookIds);
 }

@@ -1,13 +1,13 @@
 package ksp7331.practice.libraryAPI.config;
 
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.Book;
-import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBook;
-import ksp7331.practice.libraryAPI.library.infrastructure.entity.Library;
-import ksp7331.practice.libraryAPI.loan.infrastructure.entity.Loan;
-import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanBook;
-import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMember;
-import ksp7331.practice.libraryAPI.member.infrastructure.entity.Member;
-import ksp7331.practice.libraryAPI.member.infrastructure.entity.Phone;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.BookEntity;
+import ksp7331.practice.libraryAPI.book.infrastructure.entity.LibraryBookEntity;
+import ksp7331.practice.libraryAPI.library.infrastructure.entity.LibraryEntity;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanBookEntity;
+import ksp7331.practice.libraryAPI.loan.infrastructure.entity.LoanEntity;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.LibraryMemberEntity;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.MemberEntity;
+import ksp7331.practice.libraryAPI.member.infrastructure.entity.PhoneEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,40 +24,40 @@ public class CustomJPARepository implements TestRepository{
     }
 
     @Override
-    public void saveBooks(List<Book> books) {
+    public void saveBooks(List<BookEntity> books) {
         saveEntities(books);
     }
 
     @Override
-    public void saveLibraries(List<Library> libraries) {
+    public void saveLibraries(List<LibraryEntity> libraries) {
         saveEntities(libraries);
     }
 
     @Override
-    public void saveLibraryBooks(List<LibraryBook> libraryBooks) {
+    public void saveLibraryBooks(List<LibraryBookEntity> libraryBooks) {
         saveEntities(libraryBooks);
     }
 
     @Override
-    public void saveMembers(List<Member> members) {
+    public void saveMembers(List<MemberEntity> members) {
         saveEntities(members);
     }
     @Override
-    public void saveLibraryMembers(List<LibraryMember> libraryMembers) {
+    public void saveLibraryMembers(List<LibraryMemberEntity> libraryMembers) {
         saveEntities(libraryMembers);
     }
     @Override
-    public void savePhones(List<Phone> phones) {
+    public void savePhones(List<PhoneEntity> phones) {
         saveEntities(phones);
     }
 
     @Override
-    public void saveLoans(List<Loan> loans) {
+    public void saveLoans(List<LoanEntity> loans) {
         saveEntities(loans);
     }
 
     @Override
-    public void saveLoanBooks(List<LoanBook> loanBooks) {
+    public void saveLoanBooks(List<LoanBookEntity> loanBooks) {
         saveEntities(loanBooks);
     }
 
