@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoanEntity extends BaseTimeEntity {
-    private static final int MAX_LOANABLE_BOOKS = 5;
-    private static final int MAX_LOANABLE_DAYS = 14;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,6 +29,7 @@ public class LoanEntity extends BaseTimeEntity {
     public LoanEntity(Long id, LibraryMemberEntity libraryMember, List<LoanBookEntity> loanBooks) {
         this.id = id;
         this.libraryMember = libraryMember;
+        this.libraryMember.addLoan(this);
         this.loanBooks = loanBooks;
         loanBooks.forEach(loanBook -> loanBook.setLoan(this));
     }
@@ -44,7 +43,6 @@ public class LoanEntity extends BaseTimeEntity {
     }
 
     public void update(Loan loan) {
-        // libraryMember.update();
         loan.getLoanBooks().forEach(book -> {
             this.loanBooks.stream().filter(b -> b.getId() == book.getId()).forEach(b -> b.update(book));
         });

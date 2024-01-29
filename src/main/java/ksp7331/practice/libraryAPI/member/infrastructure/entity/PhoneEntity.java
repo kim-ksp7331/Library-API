@@ -20,6 +20,7 @@ public class PhoneEntity extends BaseTimeEntity {
     private String number;
     @ManyToOne
     @JoinColumn(name = "LIBRARY_MEMBER_ID")
+    @Setter(AccessLevel.PACKAGE)
     private LibraryMemberEntity libraryMember;
 
     public static PhoneEntity from(Phone domain, LibraryMemberEntity libraryMember) {

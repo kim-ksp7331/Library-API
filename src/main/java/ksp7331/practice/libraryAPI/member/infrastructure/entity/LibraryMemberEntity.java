@@ -35,13 +35,25 @@ public class LibraryMemberEntity extends BaseTimeEntity {
     @Setter
     private LocalDate loanAvailableDay = LocalDate.EPOCH;
 
-
-    @Builder
     public LibraryMemberEntity(Long id, MemberEntity member, LibraryEntity library, String phone) {
         this.id = id;
         setMember(member);
         this.library = library;
         addPhone(phone);
+    }
+
+    @Builder
+    public LibraryMemberEntity(Long id, MemberEntity member, LibraryEntity library, List<PhoneEntity> phones,
+                               Integer loanBooksCount, LocalDate loanAvailableDay) {
+        this.id = id;
+        setMember(member);
+        this.library = library;
+        Optional.ofNullable(phones).ifPresent(ps -> {
+            ps.forEach(p -> p.setLibraryMember(this));
+            this.phones = ps;
+        });
+        Optional.ofNullable(loanBooksCount).ifPresent(l -> this.loanBooksCount = l);
+        Optional.ofNullable(loanAvailableDay).ifPresent(l -> this.loanAvailableDay = l);
     }
     private void setMember(MemberEntity member) {
         Optional.ofNullable(member).ifPresent(m -> {
@@ -58,6 +70,10 @@ public class LibraryMemberEntity extends BaseTimeEntity {
                     .build();
             phones.add(phone);
         });
+    }
+
+    public void addLoan(LoanEntity loan) {
+        loans.add(loan);
     }
 
 

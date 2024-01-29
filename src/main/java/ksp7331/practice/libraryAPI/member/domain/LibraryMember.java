@@ -42,7 +42,10 @@ public class LibraryMember {
         this.id = id;
         setMember(member);
         this.library = library;
-        Optional.ofNullable(phones).ifPresent(p -> this.phones = p);
+        Optional.ofNullable(phones).ifPresent(ps -> {
+            ps.forEach(p -> p.setLibraryMember(this));
+            this.phones = ps;
+        });
         Optional.ofNullable(loanBooksCount).ifPresent(l -> this.loanBooksCount = l);
         Optional.ofNullable(loanAvailableDay).ifPresent(l -> this.loanAvailableDay = l);
         Optional.ofNullable(loans).ifPresent(l -> this.loans = l);

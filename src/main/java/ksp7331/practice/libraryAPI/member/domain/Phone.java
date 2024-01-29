@@ -1,8 +1,6 @@
 package ksp7331.practice.libraryAPI.member.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 
 @Getter
@@ -11,5 +9,6 @@ import lombok.Getter;
 public class Phone {
     private Long id;
     private String number;
+    @Setter(AccessLevel.PACKAGE)
     private LibraryMember libraryMember;
 }
